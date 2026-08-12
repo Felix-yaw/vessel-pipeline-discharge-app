@@ -16,9 +16,9 @@ class OperationStatusRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final bool isActive = status == 'Active';
     final Color dotColor =
-        isActive ? const Color(0xFF12B76A) : AppColors.primaryColor;
+        isActive ? AppColors.successGreen : AppColors.primaryColor;
     final Color statusColor =
-        isActive ? const Color(0xFF0F766E) : AppColors.primaryColor;
+        isActive ? AppColors.successGreenText : AppColors.primaryColor;
 
     return Container(
       width: double.infinity,

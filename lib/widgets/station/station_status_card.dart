@@ -16,9 +16,10 @@ class StationStatusCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool isReady = status == 'Ready';
-    final Color innerBg = isReady ? const Color(0xFFD1FADF) : AppColors.tabColor;
+    final Color innerBg =
+        isReady ? AppColors.readyGreenBackground : AppColors.tabColor;
     final Color statusColor =
-        isReady ? const Color(0xFF12B76A) : AppColors.greyColor;
+        isReady ? AppColors.successGreen : AppColors.greyColor;
 
     return Container(
       width: getProportionateScreenWidth(101),

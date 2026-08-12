@@ -82,7 +82,7 @@ class NavItem extends StatelessWidget {
                               vertical: getProportionateHeight(2),
                             ),
                             decoration: BoxDecoration(
-                              color: const Color(0xFF12B76A),
+                              color: AppColors.successGreen,
                               borderRadius: BorderRadius.circular(
                                 getProportionateHeight(8),
                               ),

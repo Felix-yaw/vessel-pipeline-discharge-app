@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:vessel_pipeline_discharge_app/core/constants/colors.dart';
 import 'package:vessel_pipeline_discharge_app/core/constants/size_config.dart';
-import 'package:vessel_pipeline_discharge_app/widgets/station_status_card.dart';
+import 'package:vessel_pipeline_discharge_app/widgets/station/station_status_card.dart';
 
 /// Section title plus a horizontally scrollable list of station status cards.
 class StationStatus extends StatelessWidget {
@@ -17,9 +17,9 @@ class StationStatus extends StatelessWidget {
         Text(
           'Station Status',
           style: TextStyle(
-            fontSize: getProportionateHeight(18),
+            fontSize: getProportionateHeight(20),
             color: AppColors.greyColor,
-            fontWeight: FontWeight.w700,
+            fontWeight: FontWeight.w500,
           ),
         ),
         SizedBox(height: getProportionateHeight(12)),

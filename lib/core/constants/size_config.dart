@@ -1,19 +1,38 @@
 import 'package:flutter/material.dart'
-    show BuildContext, MediaQuery, MediaQueryData, Orientation;
+    show
+        BuildContext,
+        MediaQuery,
+        MediaQueryData,
+        Orientation,
+        Size;
 
 //Must be called on Initialization
 class ScreenSize {
-  static late MediaQueryData _mediaQueryData;
-  static late double screenWidth;
-  static late double screenHeight;
-  static late double defaultSize;
-  static late Orientation orientation;
+  // Design reference sizes used as safe defaults if metrics are not yet ready.
+  static const double _designWidth = 375;
+  static const double _designHeight = 812;
+
+  static MediaQueryData _mediaQueryData = const MediaQueryData(
+    size: Size(_designWidth, _designHeight),
+  );
+  static double screenWidth = _designWidth;
+  static double screenHeight = _designHeight;
+  static double defaultSize = _designHeight;
+  static Orientation orientation = Orientation.portrait;
 
   void init(BuildContext context) {
-    _mediaQueryData = MediaQuery.of(context);
-    screenWidth = _mediaQueryData.size.width;
-    screenHeight = _mediaQueryData.size.height;
-    orientation = _mediaQueryData.orientation;
+    initData(MediaQuery.of(context));
+  }
+
+  static void initData(MediaQueryData mediaQueryData) {
+    // Ignore zero/negative metrics reported before the first real layout.
+    if (mediaQueryData.size.width <= 0 || mediaQueryData.size.height <= 0) {
+      return;
+    }
+    _mediaQueryData = mediaQueryData;
+    screenWidth = mediaQueryData.size.width;
+    screenHeight = mediaQueryData.size.height;
+    orientation = mediaQueryData.orientation;
   }
 }
 

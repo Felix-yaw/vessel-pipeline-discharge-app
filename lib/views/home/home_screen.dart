@@ -1,11 +1,16 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:vessel_pipeline_discharge_app/core/constants/colors.dart';
 import 'package:vessel_pipeline_discharge_app/core/constants/size_config.dart';
-import 'package:vessel_pipeline_discharge_app/widgets/custom_bottom_nav_bar.dart';
-import 'package:vessel_pipeline_discharge_app/widgets/grid_painter.dart';
-import 'package:vessel_pipeline_discharge_app/widgets/operation_card.dart';
-import 'package:vessel_pipeline_discharge_app/widgets/station_status.dart';
+import 'package:vessel_pipeline_discharge_app/views/alerts/alerts_screen.dart';
+import 'package:vessel_pipeline_discharge_app/views/history/history_screen.dart';
+import 'package:vessel_pipeline_discharge_app/widgets/banners/success_banner.dart';
+import 'package:vessel_pipeline_discharge_app/widgets/navigation/custom_bottom_nav_bar.dart';
+import 'package:vessel_pipeline_discharge_app/widgets/operation/operation_card.dart';
+import 'package:vessel_pipeline_discharge_app/widgets/painters/grid_painter.dart';
+import 'package:vessel_pipeline_discharge_app/widgets/station/station_status.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -15,17 +20,80 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  String _stationStatus = 'Inactive';
+  int _selectedIndex = 0;
 
-  void _handleStartDischarge() {
-    setState(() => _stationStatus = 'Ready');
+  void _handleNavTap(int index) {
+    setState(() => _selectedIndex = index);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.backgroundColor,
-      body: Column(
+      body: _selectedIndex == 0
+          ? _HomeTabContent(
+              onNavTap: _handleNavTap,
+              selectedIndex: _selectedIndex,
+            )
+          : Column(
+              children: [
+                Expanded(
+                  child: _selectedIndex == 1
+                      ? const HistoryScreen()
+                      : const AlertsScreen(),
+                ),
+                CustomBottomNavBar(
+                  selectedIndex: _selectedIndex,
+                  onTap: _handleNavTap,
+                ),
+              ],
+            ),
+    );
+  }
+}
+
+class _HomeTabContent extends StatefulWidget {
+  final int selectedIndex;
+  final ValueChanged<int> onNavTap;
+
+  const _HomeTabContent({
+    required this.selectedIndex,
+    required this.onNavTap,
+  });
+
+  @override
+  State<_HomeTabContent> createState() => _HomeTabContentState();
+}
+
+class _HomeTabContentState extends State<_HomeTabContent> {
+  String _stationStatus = 'Inactive';
+  bool _showBanner = false;
+  Timer? _bannerTimer;
+
+  @override
+  void dispose() {
+    _bannerTimer?.cancel();
+    super.dispose();
+  }
+
+  void _handleStartDischarge() {
+    setState(() => _stationStatus = 'Ready');
+  }
+
+  void _handleRecordReadings() {
+    setState(() => _showBanner = true);
+    _bannerTimer?.cancel();
+    _bannerTimer = Timer(const Duration(seconds: 5), () {
+      if (mounted) setState(() => _showBanner = false);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        SingleChildScrollView(
+          child: Column(
         children: [
             Padding(
               padding: EdgeInsets.only(
@@ -62,6 +130,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: OperationCard(
                         hasOperation: false,
                         onStartDischarge: _handleStartDischarge,
+                        onRecordReadings: _handleRecordReadings,
                       ),
                     ),
                     Positioned(
@@ -105,14 +174,23 @@ class _HomeScreenState extends State<HomeScreen> {
               child: StationStatus(status: _stationStatus),
             ),
             SizedBox(height: getProportionateHeight(32.67)),
-            const CustomBottomNavBar(
-              selectedIndex: 0,
-              onTap: _noopNavTap,
+            CustomBottomNavBar(
+              selectedIndex: widget.selectedIndex,
+              onTap: widget.onNavTap,
             ),
           ],
         ),
+        ),
+        if (_showBanner)
+          Positioned(
+            left: 0,
+            right: 0,
+            top: getProportionateHeight(51),
+            child: const Center(
+              child: SuccessBanner(),
+            ),
+          ),
+      ],
     );
   }
-
-  static void _noopNavTap(int _) {}
 }

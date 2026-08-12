@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:vessel_pipeline_discharge_app/core/constants/colors.dart';
 import 'package:vessel_pipeline_discharge_app/core/constants/size_config.dart';
-import 'package:vessel_pipeline_discharge_app/widgets/confirm_operation_screen.dart';
-import 'package:vessel_pipeline_discharge_app/widgets/custom_text_field.dart';
-import 'package:vessel_pipeline_discharge_app/widgets/gradient_button.dart';
-// import 'package:vessel_pipeline_discharge_app/widgets/grid_painter.dart';
+import 'package:vessel_pipeline_discharge_app/views/operation/confirm_operation_screen.dart';
+import 'package:vessel_pipeline_discharge_app/widgets/buttons/gradient_button.dart';
+import 'package:vessel_pipeline_discharge_app/widgets/fields/custom_text_field.dart';
+// import 'package:vessel_pipeline_discharge_app/widgets/painters/grid_painter.dart';
 
 /// Screen shown when starting a new operation.
 class NewOperationScreen extends StatelessWidget {

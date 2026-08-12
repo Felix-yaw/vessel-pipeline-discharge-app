@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:vessel_pipeline_discharge_app/core/constants/colors.dart';
 import 'package:vessel_pipeline_discharge_app/core/constants/size_config.dart';
-import 'package:vessel_pipeline_discharge_app/widgets/gradient_button.dart';
+import 'package:vessel_pipeline_discharge_app/widgets/buttons/gradient_button.dart';
 
 /// Screen shown after filling the new operation details.
 class ConfirmOperationScreen extends StatelessWidget {

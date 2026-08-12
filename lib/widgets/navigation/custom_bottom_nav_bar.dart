@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:vessel_pipeline_discharge_app/core/constants/colors.dart';
 import 'package:vessel_pipeline_discharge_app/core/constants/size_config.dart';
-import 'package:vessel_pipeline_discharge_app/widgets/nav_item.dart';
+import 'package:vessel_pipeline_discharge_app/widgets/navigation/nav_item.dart';
 
 /// Custom bottom navigation bar with two grouped grey containers.
 class CustomBottomNavBar extends StatelessWidget {
@@ -26,7 +26,7 @@ class CustomBottomNavBar extends StatelessWidget {
         borderRadius: BorderRadius.circular(getProportionateHeight(24)),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF000000).withValues(alpha: 0.06),
+            color: AppColors.shadowColor.withValues(alpha: 0.06),
             blurRadius: getProportionateHeight(8),
             offset: Offset(0, getProportionateHeight(-2)),
           ),

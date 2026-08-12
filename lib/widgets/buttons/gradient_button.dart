@@ -4,8 +4,9 @@ import 'package:vessel_pipeline_discharge_app/core/constants/colors.dart';
 import 'package:vessel_pipeline_discharge_app/core/constants/size_config.dart';
 
 const List<Color> kBackgroundGradient = [
-  Color(0xFF5176E6),
-  Color(0xFF192547),
+  Color(0xFF31478A),
+  Color(0xFF3A54A2),
+  Color(0xFF6882CC),
 ];
 
 /// A full-width rounded button with a linear gradient background.
@@ -48,8 +49,8 @@ class GradientButton extends StatelessWidget {
               color: backgroundColor,
               gradient: backgroundColor == null
                   ? const LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
+                      begin: Alignment.bottomCenter,
+                      end: Alignment.topCenter,
                       colors: kBackgroundGradient,
                     )
                   : null,

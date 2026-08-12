@@ -1,24 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:vessel_pipeline_discharge_app/core/constants/colors.dart';
 import 'package:vessel_pipeline_discharge_app/core/constants/size_config.dart';
-import 'package:vessel_pipeline_discharge_app/widgets/empty_operation_card.dart';
-import 'package:vessel_pipeline_discharge_app/widgets/gradient_button.dart';
-import 'package:vessel_pipeline_discharge_app/widgets/hourly_readings_screen.dart';
-import 'package:vessel_pipeline_discharge_app/widgets/initial_readings_screen.dart';
-import 'package:vessel_pipeline_discharge_app/widgets/new_operation_screen.dart';
-import 'package:vessel_pipeline_discharge_app/widgets/operation_card_info.dart';
+import 'package:vessel_pipeline_discharge_app/views/operation/hourly_readings_screen.dart';
+import 'package:vessel_pipeline_discharge_app/views/operation/initial_readings_screen.dart';
+import 'package:vessel_pipeline_discharge_app/views/operation/new_operation_screen.dart';
+import 'package:vessel_pipeline_discharge_app/widgets/buttons/gradient_button.dart';
+import 'package:vessel_pipeline_discharge_app/widgets/operation/empty_operation_card.dart';
+import 'package:vessel_pipeline_discharge_app/widgets/operation/operation_card_info.dart';
 
 /// The white card that sits over the background SVG with operation info.
 class OperationCard extends StatefulWidget {
   final bool hasOperation;
   final VoidCallback? onContinue;
   final VoidCallback? onStartDischarge;
+  final VoidCallback? onRecordReadings;
 
   const OperationCard({
     super.key,
     this.hasOperation = false,
     this.onContinue,
     this.onStartDischarge,
+    this.onRecordReadings,
   });
 
   @override
@@ -30,6 +32,7 @@ class _OperationCardState extends State<OperationCard> {
   bool _showRecordReadings = false;
   bool _showStartDischarge = false;
   bool _showHaltDischarge = false;
+  bool _showMarkChecks = false;
 
   @override
   void initState() {
@@ -48,6 +51,7 @@ class _OperationCardState extends State<OperationCard> {
     );
     if (result == true && mounted) {
       setState(() => _showRecordReadings = true);
+      widget.onRecordReadings?.call();
     }
   }
 
@@ -65,10 +69,24 @@ class _OperationCardState extends State<OperationCard> {
     setState(() => _showHaltDischarge = true);
   }
 
-  void _handleHaltDischarge() {
-    Navigator.of(context).push(
+  Future<void> _handleHaltDischarge() async {
+    final result = await Navigator.of(context).push<bool>(
       MaterialPageRoute(builder: (_) => const HourlyReadingsScreen()),
     );
+    if (result == true && mounted) {
+      setState(() => _showMarkChecks = true);
+    }
+  }
+
+  void _handleMarkChecks() {
+    setState(() {
+      _showOperation = false;
+      _showRecordReadings = false;
+      _showStartDischarge = false;
+      _showHaltDischarge = false;
+      _showMarkChecks = false;
+    });
+    widget.onContinue?.call();
   }
 
   @override
@@ -96,27 +114,34 @@ class _OperationCardState extends State<OperationCard> {
             child: GradientButton(
               label: !showOperation
                   ? 'Retry'
-                  : _showHaltDischarge
-                      ? 'Halt Discharge'
-                      : _showStartDischarge
-                          ? 'Start discharge'
-                          : _showRecordReadings
-                              ? 'Record initial readings'
-                              : 'Start Operation',
+                  : _showMarkChecks
+                      ? 'Mark Checks Completed'
+                      : _showHaltDischarge
+                          ? 'Halt Discharge'
+                          : _showStartDischarge
+                              ? 'Start discharge'
+                              : _showRecordReadings
+                                  ? 'Record initial readings'
+                                  : 'Start Operation',
               onPressed: !showOperation
                   ? _handleRetry
-                  : _showHaltDischarge
-                      ? _handleHaltDischarge
-                      : _showStartDischarge
-                          ? _handleStartDischarge
-                          : _showRecordReadings
-                              ? _handleRecordReadings
-                              : _handleStartOperation,
-              backgroundColor:
-                  _showHaltDischarge ? const Color(0xFFFEE4E2) : null,
-              textColor:
-                  _showHaltDischarge ? const Color(0xFFB42318) : null,
-              showCheckIcon: _showRecordReadings && !_showStartDischarge,
+                  : _showMarkChecks
+                      ? _handleMarkChecks
+                      : _showHaltDischarge
+                          ? _handleHaltDischarge
+                          : _showStartDischarge
+                              ? _handleStartDischarge
+                              : _showRecordReadings
+                                  ? _handleRecordReadings
+                                  : _handleStartOperation,
+              backgroundColor: !_showMarkChecks && _showHaltDischarge
+                  ? AppColors.haltBackground
+                  : null,
+              textColor: !_showMarkChecks && _showHaltDischarge
+                  ? AppColors.haltText
+                  : null,
+              showCheckIcon: _showMarkChecks ||
+                  (_showRecordReadings && !_showStartDischarge),
               showArrowIcon: _showStartDischarge && !_showHaltDischarge,
             ),
           ),

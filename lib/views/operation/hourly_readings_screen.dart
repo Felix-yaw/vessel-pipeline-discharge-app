@@ -2,13 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:vessel_pipeline_discharge_app/core/constants/colors.dart';
 import 'package:vessel_pipeline_discharge_app/core/constants/size_config.dart';
-import 'package:vessel_pipeline_discharge_app/widgets/custom_dropdown_field.dart';
-import 'package:vessel_pipeline_discharge_app/widgets/custom_text_field.dart';
-import 'package:vessel_pipeline_discharge_app/widgets/gradient_button.dart';
+import 'package:vessel_pipeline_discharge_app/widgets/buttons/gradient_button.dart';
+import 'package:vessel_pipeline_discharge_app/widgets/fields/custom_text_field.dart';
 
-/// Screen shown when recording initial readings.
-class InitialReadingsScreen extends StatelessWidget {
-  const InitialReadingsScreen({super.key});
+/// Screen shown when recording hourly readings.
+class HourlyReadingsScreen extends StatelessWidget {
+  const HourlyReadingsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -70,7 +69,7 @@ class InitialReadingsScreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Initial Readings',
+                          'Hourly Readings',
                           style: TextStyle(
                             color: AppColors.greyColor,
                             fontSize: getProportionateHeight(20),
@@ -111,42 +110,59 @@ class InitialReadingsScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      'Record opening readings before discharge begins',
-                      style: TextStyle(
-                        color: AppColors.greyColor,
-                        fontSize: getProportionateHeight(16),
-                        fontWeight: FontWeight.w400,
-                      ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Hour 03',
+                          style: TextStyle(
+                            color: AppColors.secondaryColor,
+                            fontSize: getProportionateHeight(16),
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                        Text(
+                          '30th July 2026, 13:00',
+                          style: TextStyle(
+                            color: AppColors.secondaryColor,
+                            fontSize: getProportionateHeight(16),
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                      ],
                     ),
-                    SizedBox(height: getProportionateHeight(38)),
-                    const CustomDropdownField(
-                      title: 'Expected tank',
-                      hintText: 'Select tank',
-                      items: ['Tank 1', 'Tank 2', 'Tank 3'],
-                    ),
-                    SizedBox(height: getProportionateHeight(16)),
-                    Text(
-                      'Flow Meter Readings',
-                      style: TextStyle(
-                        fontSize: getProportionateHeight(18),
-                        color: AppColors.secondaryColor,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    SizedBox(height: getProportionateHeight(14)),
+                    SizedBox(height: getProportionateHeight(24)),
                     const CustomTextField(
-                      title: 'Mass',
-                      hintText: 'MT African Spirit',
-                    ),
-                    SizedBox(height: getProportionateHeight(16)),
-                    const CustomTextField(
-                      title: 'Density',
+                      title: 'Flow rate',
                       hintText: '0.00',
                     ),
                     SizedBox(height: getProportionateHeight(16)),
                     const CustomTextField(
-                      title: 'Temperature',
+                      title: 'Total discharge',
+                      hintText: '0.00',
+                    ),
+                    SizedBox(height: getProportionateHeight(16)),
+                    const CustomTextField(
+                      title: 'Remaining on board',
+                      hintText: '0.00',
+                    ),
+                    SizedBox(height: getProportionateHeight(24)),
+                    Text(
+                      'Flow Meter Reading',
+                      style: TextStyle(
+                        color: AppColors.primaryColor,
+                        fontSize: getProportionateHeight(18),
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    SizedBox(height: getProportionateHeight(16)),
+                    const CustomTextField(
+                      title: 'Mass',
+                      hintText: '0.00',
+                    ),
+                    SizedBox(height: getProportionateHeight(16)),
+                    const CustomTextField(
+                      title: 'Density',
                       hintText: '0.00',
                     ),
                   ],
@@ -161,7 +177,7 @@ class InitialReadingsScreen extends StatelessWidget {
                 borderRadius: BorderRadius.circular(getProportionateHeight(24)),
                 boxShadow: [
                   BoxShadow(
-                    color: const Color(0xFF000000).withValues(alpha: 0.06),
+                    color: AppColors.shadowColor.withValues(alpha: 0.06),
                     blurRadius: getProportionateHeight(8),
                     offset: Offset(0, getProportionateHeight(-2)),
                   ),

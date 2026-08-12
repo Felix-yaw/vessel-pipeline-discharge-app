@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:vessel_pipeline_discharge_app/core/constants/colors.dart';
 import 'package:vessel_pipeline_discharge_app/core/constants/size_config.dart';
-import 'package:vessel_pipeline_discharge_app/widgets/operation_statistic.dart';
-import 'package:vessel_pipeline_discharge_app/widgets/operation_status_row.dart';
+import 'package:vessel_pipeline_discharge_app/widgets/operation/operation_statistic.dart';
+import 'package:vessel_pipeline_discharge_app/widgets/operation/operation_status_row.dart';
 
 class OperationCardInfo extends StatelessWidget {
   final String status;
