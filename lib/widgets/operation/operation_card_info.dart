@@ -17,10 +17,7 @@ class OperationCardInfo extends StatelessWidget {
           left: getProportionateScreenWidth(8),
           right: getProportionateScreenWidth(8),
           top: getProportionateHeight(8),
-          child: OperationStatusRow(
-            label: 'CURRENT OPERATION',
-            status: status,
-          ),
+          child: OperationStatusRow(label: 'CURRENT OPERATION', status: status),
         ),
         Positioned(
           left: getProportionateScreenWidth(16),

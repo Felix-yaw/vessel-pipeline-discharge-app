@@ -16,10 +16,12 @@ class StationStatusCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool isReady = status == 'Ready';
-    final Color innerBg =
-        isReady ? AppColors.readyGreenBackground : AppColors.tabColor;
-    final Color statusColor =
-        isReady ? AppColors.successGreen : AppColors.greyColor;
+    final Color innerBackground = isReady
+        ? AppColors.readyGreenBackground
+        : AppColors.tabColor;
+    final Color statusColor = isReady
+        ? AppColors.successGreen
+        : AppColors.greyColor;
 
     return Container(
       width: getProportionateScreenWidth(101),
@@ -45,7 +47,7 @@ class StationStatusCard extends StatelessWidget {
               width: getProportionateScreenWidth(85),
               height: getProportionateHeight(85),
               decoration: BoxDecoration(
-                color: innerBg,
+                color: innerBackground,
                 borderRadius: BorderRadius.circular(getProportionateHeight(16)),
               ),
               child: Center(

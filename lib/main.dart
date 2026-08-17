@@ -12,6 +12,7 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ScreenSize.initData(MediaQuery.of(context));
     return MaterialApp(
       theme: ThemeData(
         useMaterial3: false,
@@ -19,25 +20,9 @@ class MainApp extends StatelessWidget {
         scaffoldBackgroundColor: AppColors.backgroundColor,
       ),
       debugShowCheckedModeBanner: false,
-      home: const _ScreenSizeScope(child: HomeScreen()),
+      home: const HomeScreen(),
     );
   }
 }
 
 /// Initializes [ScreenSize] with the real MediaQuery dimensions.
-class _ScreenSizeScope extends StatefulWidget {
-  final Widget child;
-
-  const _ScreenSizeScope({required this.child});
-
-  @override
-  State<_ScreenSizeScope> createState() => _ScreenSizeScopeState();
-}
-
-class _ScreenSizeScopeState extends State<_ScreenSizeScope> {
-  @override
-  Widget build(BuildContext context) {
-    ScreenSize.initData(MediaQuery.of(context));
-    return widget.child;
-  }
-}
