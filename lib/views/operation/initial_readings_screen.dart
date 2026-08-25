@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:vessel_pipeline_discharge_app/core/constants/colors.dart';
 import 'package:vessel_pipeline_discharge_app/core/constants/size_config.dart';
 import 'package:vessel_pipeline_discharge_app/widgets/buttons/gradient_button.dart';
 import 'package:vessel_pipeline_discharge_app/widgets/fields/custom_dropdown_field.dart';
 import 'package:vessel_pipeline_discharge_app/widgets/fields/custom_text_field.dart';
+import 'package:vessel_pipeline_discharge_app/widgets/layout/bottom_action_bar.dart';
+import 'package:vessel_pipeline_discharge_app/widgets/layout/page_header.dart';
 
 /// Screen shown when recording initial readings.
 class InitialReadingsScreen extends StatelessWidget {
@@ -22,88 +23,10 @@ class InitialReadingsScreen extends StatelessWidget {
         ),
         child: Column(
           children: [
-            Container(
-              width: getProportionateScreenWidth(336),
-              height: getProportionateHeight(134),
-              clipBehavior: Clip.antiAlias,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(getProportionateHeight(32)),
-              ),
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  SvgPicture.asset(
-                    'assets/images/background2.svg',
-                    fit: BoxFit.cover,
-                  ),
-                  Positioned(
-                    left: getProportionateScreenWidth(16),
-                    top: getProportionateHeight(16),
-                    child: GestureDetector(
-                      onTap: () => Navigator.pop(context),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            Icons.arrow_back_ios_new,
-                            color: AppColors.primaryColor,
-                            size: getProportionateHeight(20),
-                          ),
-                          SizedBox(width: getProportionateScreenWidth(8)),
-                          Text(
-                            'Back',
-                            style: TextStyle(
-                              color: AppColors.primaryColor,
-                              fontSize: getProportionateHeight(16),
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    left: getProportionateScreenWidth(16),
-                    right: getProportionateScreenWidth(16),
-                    top: getProportionateHeight(62),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Initial Readings',
-                          style: TextStyle(
-                            color: AppColors.greyColor,
-                            fontSize: getProportionateHeight(20),
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        SizedBox(height: getProportionateHeight(4)),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              'MT African Spirit',
-                              style: TextStyle(
-                                color: AppColors.primaryColor,
-                                fontSize: getProportionateHeight(23),
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            Text(
-                              'VES 101203',
-                              style: TextStyle(
-                                color: AppColors.primaryColor,
-                                fontSize: getProportionateHeight(14),
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+            const PageHeader(
+              title: 'Initial Readings',
+              name: 'MT African Spirit',
+              code: 'VES 101203',
             ),
             SizedBox(height: getProportionateHeight(24)),
             Expanded(
@@ -153,27 +76,12 @@ class InitialReadingsScreen extends StatelessWidget {
                 ),
               ),
             ),
-            Container(
-              width: getProportionateScreenWidth(376),
-              height: getProportionateHeight(76),
-              decoration: BoxDecoration(
-                color: Colors.transparent,
-                borderRadius: BorderRadius.circular(getProportionateHeight(24)),
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.shadowColor.withValues(alpha: 0.06),
-                    blurRadius: getProportionateHeight(8),
-                    offset: Offset(0, getProportionateHeight(-2)),
-                  ),
-                ],
-              ),
-              child: Center(
-                child: GradientButton(
-                  label: 'Submit',
-                  width: getProportionateScreenWidth(336),
-                  height: getProportionateHeight(56),
-                  onPressed: () => Navigator.of(context).pop(true),
-                ),
+            BottomActionBar(
+              child: GradientButton(
+                label: 'Submit',
+                width: getProportionateScreenWidth(336),
+                height: getProportionateHeight(56),
+                onPressed: () => Navigator.of(context).pop(true),
               ),
             ),
           ],

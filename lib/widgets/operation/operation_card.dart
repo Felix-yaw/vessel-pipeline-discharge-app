@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:vessel_pipeline_discharge_app/core/constants/colors.dart';
 import 'package:vessel_pipeline_discharge_app/core/constants/size_config.dart';
+import 'package:vessel_pipeline_discharge_app/models/operation_models.dart';
+import 'package:vessel_pipeline_discharge_app/views/operation/checklist_summary_screen.dart';
 import 'package:vessel_pipeline_discharge_app/views/operation/hourly_readings_screen.dart';
 import 'package:vessel_pipeline_discharge_app/views/operation/initial_readings_screen.dart';
 import 'package:vessel_pipeline_discharge_app/views/operation/new_operation_screen.dart';
@@ -27,12 +29,19 @@ class OperationCard extends StatefulWidget {
   State<OperationCard> createState() => _OperationCardState();
 }
 
+/// Step the operation wizard is currently on.
+enum _OperationStep {
+  startOperation,
+  recordReadings,
+  startDischarge,
+  haltDischarge,
+  markChecks,
+}
+
 class _OperationCardState extends State<OperationCard> {
   late bool _showOperation;
-  bool _showRecordReadings = false;
-  bool _showStartDischarge = false;
-  bool _showHaltDischarge = false;
-  bool _showMarkChecks = false;
+  _OperationStep _step = _OperationStep.startOperation;
+  final List<HourlyReadingData> _hourlyReadings = [];
 
   @override
   void initState() {
@@ -41,7 +50,11 @@ class _OperationCardState extends State<OperationCard> {
   }
 
   void _handleRetry() {
-    setState(() => _showOperation = true);
+    setState(() {
+      _showOperation = true;
+      _step = _OperationStep.startOperation;
+    });
+    _hourlyReadings.clear();
     widget.onContinue?.call();
   }
 
@@ -50,7 +63,7 @@ class _OperationCardState extends State<OperationCard> {
       MaterialPageRoute(builder: (_) => const NewOperationScreen()),
     );
     if (result == true && mounted) {
-      setState(() => _showRecordReadings = true);
+      setState(() => _step = _OperationStep.recordReadings);
       widget.onRecordReadings?.call();
     }
   }
@@ -60,38 +73,48 @@ class _OperationCardState extends State<OperationCard> {
       MaterialPageRoute(builder: (_) => const InitialReadingsScreen()),
     );
     if (result == true && mounted) {
-      setState(() => _showStartDischarge = true);
+      setState(() => _step = _OperationStep.startDischarge);
       widget.onStartDischarge?.call();
     }
   }
 
   void _handleStartDischarge() {
-    setState(() => _showHaltDischarge = true);
+    setState(() => _step = _OperationStep.haltDischarge);
   }
 
   Future<void> _handleHaltDischarge() async {
-    final result = await Navigator.of(context).push<bool>(
+    final HourlyReadingData? reading =
+        await Navigator.of(context).push<HourlyReadingData>(
       MaterialPageRoute(builder: (_) => const HourlyReadingsScreen()),
     );
-    if (result == true && mounted) {
-      setState(() => _showMarkChecks = true);
+    if (reading == null || !mounted) return;
+    setState(() => _hourlyReadings.add(reading));
+    final bool? confirmed = await Navigator.of(context).push<bool>(
+      MaterialPageRoute(
+        builder: (_) => ChecklistSummaryScreen(
+          hourlyReadings: List.unmodifiable(_hourlyReadings),
+          vesselName: 'MT African Spirit',
+        ),
+      ),
+    );
+    if (confirmed == true && mounted) {
+      setState(() => _step = _OperationStep.markChecks);
     }
   }
 
   void _handleMarkChecks() {
     setState(() {
       _showOperation = false;
-      _showRecordReadings = false;
-      _showStartDischarge = false;
-      _showHaltDischarge = false;
-      _showMarkChecks = false;
+      _step = _OperationStep.startOperation;
     });
+    _hourlyReadings.clear();
     widget.onContinue?.call();
   }
 
   @override
   Widget build(BuildContext context) {
-    final bool showOperation = _showOperation;
+    final bool isActive = _step != _OperationStep.startOperation &&
+        _step != _OperationStep.recordReadings;
     return Container(
       decoration: BoxDecoration(
         color: AppColors.backgroundColor,
@@ -101,10 +124,8 @@ class _OperationCardState extends State<OperationCard> {
       child: Stack(
         fit: StackFit.expand,
         children: [
-          if (showOperation)
-            OperationCardInfo(
-              status: _showStartDischarge ? 'Active' : 'Pending',
-            )
+          if (_showOperation)
+            OperationCardInfo(status: isActive ? 'Active' : 'Pending')
           else
             const EmptyOperationCard(),
           Positioned(
@@ -112,37 +133,33 @@ class _OperationCardState extends State<OperationCard> {
             right: getProportionateScreenWidth(8),
             top: getProportionateHeight(230),
             child: GradientButton(
-              label: !showOperation
+              label: !_showOperation
                   ? 'Retry'
-                  : _showMarkChecks
-                      ? 'Mark Checks Completed'
-                      : _showHaltDischarge
-                          ? 'Halt Discharge'
-                          : _showStartDischarge
-                              ? 'Start discharge'
-                              : _showRecordReadings
-                                  ? 'Record initial readings'
-                                  : 'Start Operation',
-              onPressed: !showOperation
+                  : switch (_step) {
+                      _OperationStep.markChecks => 'Mark Checks Completed',
+                      _OperationStep.haltDischarge => 'Halt Discharge',
+                      _OperationStep.startDischarge => 'Start discharge',
+                      _OperationStep.recordReadings => 'Record initial readings',
+                      _OperationStep.startOperation => 'Start Operation',
+                    },
+              onPressed: !_showOperation
                   ? _handleRetry
-                  : _showMarkChecks
-                      ? _handleMarkChecks
-                      : _showHaltDischarge
-                          ? _handleHaltDischarge
-                          : _showStartDischarge
-                              ? _handleStartDischarge
-                              : _showRecordReadings
-                                  ? _handleRecordReadings
-                                  : _handleStartOperation,
-              backgroundColor: !_showMarkChecks && _showHaltDischarge
+                  : switch (_step) {
+                      _OperationStep.markChecks => _handleMarkChecks,
+                      _OperationStep.haltDischarge => _handleHaltDischarge,
+                      _OperationStep.startDischarge => _handleStartDischarge,
+                      _OperationStep.recordReadings => _handleRecordReadings,
+                      _OperationStep.startOperation => _handleStartOperation,
+                    },
+              backgroundColor: _step == _OperationStep.haltDischarge
                   ? AppColors.haltBackground
                   : null,
-              textColor: !_showMarkChecks && _showHaltDischarge
+              textColor: _step == _OperationStep.haltDischarge
                   ? AppColors.haltText
                   : null,
-              showCheckIcon: _showMarkChecks ||
-                  (_showRecordReadings && !_showStartDischarge),
-              showArrowIcon: _showStartDischarge && !_showHaltDischarge,
+              showCheckIcon: _step == _OperationStep.markChecks ||
+                  _step == _OperationStep.recordReadings,
+              showArrowIcon: _step == _OperationStep.startDischarge,
             ),
           ),
         ],

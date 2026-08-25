@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:vessel_pipeline_discharge_app/core/constants/colors.dart';
 import 'package:vessel_pipeline_discharge_app/core/constants/size_config.dart';
 import 'package:vessel_pipeline_discharge_app/views/operation/confirm_operation_screen.dart';
 import 'package:vessel_pipeline_discharge_app/widgets/buttons/gradient_button.dart';
 import 'package:vessel_pipeline_discharge_app/widgets/fields/custom_text_field.dart';
-// import 'package:vessel_pipeline_discharge_app/widgets/painters/grid_painter.dart';
+import 'package:vessel_pipeline_discharge_app/widgets/layout/page_header.dart';
 
 /// Screen shown when starting a new operation.
 class NewOperationScreen extends StatelessWidget {
@@ -23,83 +22,7 @@ class NewOperationScreen extends StatelessWidget {
         ),
         child: Column(
           children: [
-            Container(
-              width: getProportionateScreenWidth(336),
-              height: getProportionateHeight(134),
-              clipBehavior: Clip.antiAlias,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(getProportionateHeight(32)),
-              ),
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  SvgPicture.asset(
-                    'assets/images/background2.svg',
-                    fit: BoxFit.cover,
-                  ),
-
-                  /// const CustomPaint(
-                  ///   painter: GridPainter(
-                  ///     columns: 6,
-                  ///     rows: 2.5,
-                  ///     color: AppColors.secondaryColor,
-                  ///   ),
-                  /// ),
-                  Positioned(
-                    left: getProportionateScreenWidth(16),
-                    top: getProportionateHeight(16),
-                    child: GestureDetector(
-                      onTap: () => Navigator.pop(context),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            Icons.arrow_back_ios_new,
-                            color: AppColors.primaryColor,
-                            size: getProportionateHeight(20),
-                          ),
-                          SizedBox(width: getProportionateScreenWidth(8)),
-                          Text(
-                            'Back',
-                            style: TextStyle(
-                              color: AppColors.primaryColor,
-                              fontSize: getProportionateHeight(16),
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    left: getProportionateScreenWidth(16),
-                    top: getProportionateHeight(62),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'New Operation',
-                          style: TextStyle(
-                            color: AppColors.greyColor,
-                            fontSize: getProportionateHeight(20),
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        SizedBox(height: getProportionateHeight(4)),
-                        Text(
-                          'VES101203',
-                          style: TextStyle(
-                            color: AppColors.primaryColor,
-                            fontSize: getProportionateHeight(23),
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            const PageHeader(title: 'New Operation', name: 'VES101203'),
             SizedBox(height: getProportionateHeight(24)),
             Expanded(
               child: SingleChildScrollView(

@@ -6,6 +6,10 @@ class AppColors {
   const AppColors._();
 
   static const Color primaryColor = Color(0xFF3954A3);
+
+  /// Blurred/translucent variant of [primaryColor], used for disabled buttons.
+  static const Color primaryTranslucent = Color(0x593954A3);
+
   static const Color secondaryColor = Color(0xFF192547);
   static const Color tabColor = Color(0xFFF5F6F8);
   static const Color greyTab = Color(0xFFC8CFE5);

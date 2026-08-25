@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:vessel_pipeline_discharge_app/core/constants/colors.dart';
 import 'package:vessel_pipeline_discharge_app/core/constants/size_config.dart';
+import 'package:vessel_pipeline_discharge_app/models/operation_models.dart';
 import 'package:vessel_pipeline_discharge_app/views/operation/hourly_readings_screen.dart';
+import 'package:vessel_pipeline_discharge_app/widgets/layout/page_header.dart';
 
 /// Screen showing summary of all completed readings.
 class ChecklistSummaryScreen extends StatelessWidget {
@@ -17,81 +19,23 @@ class ChecklistSummaryScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.backgroundColor,
       body: SafeArea(
         child: Column(
           children: [
-            /// Header
-            Container(
-              width: double.infinity,
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Color(0xFF5C71B8), Color(0xFF3B52A7)],
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                ),
+            Padding(
+              padding: EdgeInsets.only(
+                top: getProportionateHeight(54),
+                left: getProportionateScreenWidth(20),
+                right: getProportionateScreenWidth(20),
               ),
-              padding: EdgeInsets.symmetric(
-                horizontal: getProportionateScreenWidth(20),
-                vertical: getProportionateHeight(54),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  GestureDetector(
-                    onTap: () => Navigator.pop(context),
-                    child: Row(
-                      children: [
-                        const Icon(
-                          Icons.arrow_back_ios_new,
-                          color: Colors.white,
-                          size: 20,
-                        ),
-                        SizedBox(width: getProportionateScreenWidth(4)),
-                        Text(
-                          'Back',
-                          style: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.7),
-                            fontSize: getProportionateHeight(16),
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: getProportionateHeight(16)),
-                  Text(
-                    'Summary',
-                    style: TextStyle(
-                      color: Colors.white70,
-                      fontSize: getProportionateHeight(14),
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                  SizedBox(height: getProportionateHeight(4)),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        vesselName,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: getProportionateHeight(24),
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      Text(
-                        'VES 101203',
-                        style: TextStyle(
-                          color: Colors.white70,
-                          fontSize: getProportionateHeight(14),
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+              child: PageHeader(
+                title: 'Summary',
+                name: vesselName,
+                code: 'VES 101203',
               ),
             ),
+            SizedBox(height: getProportionateHeight(24)),
 
             /// Form content
             Expanded(
