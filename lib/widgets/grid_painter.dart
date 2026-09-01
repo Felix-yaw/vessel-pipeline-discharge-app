@@ -15,7 +15,7 @@ class GridPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
       ..color = gridColor
-      ..strokeWidth = 1;
+      ..strokeWidth = 3;
 
     final cellWidth = size.width / columns;
     final cellHeight = size.height / rows;

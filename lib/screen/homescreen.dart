@@ -3,12 +3,20 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:vessel_pipeline_discharge_app/core/constants/colors.dart';
 import 'package:vessel_pipeline_discharge_app/core/constants/size_config.dart';
 import 'package:vessel_pipeline_discharge_app/widgets/grid_painter.dart';
+import 'package:vessel_pipeline_discharge_app/widgets/custom_button.dart';
+import 'package:vessel_pipeline_discharge_app/widgets/start_operation.dart';
+import 'package:vessel_pipeline_discharge_app/widgets/no_operation.dart';
+import 'package:provider/provider.dart';
+import 'package:vessel_pipeline_discharge_app/provider/operation_provider.dart';
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+  HomeScreen({super.key});
+
+  final operationCards = [StartOperation(), NoOperation()];
 
   @override
   Widget build(BuildContext context) {
+    final operationProvider = Provider.of<OperationProvider>(context);
     return Scaffold(
       backgroundColor: AppColors.backgroundColor,
       body: Padding(
@@ -43,10 +51,11 @@ class HomeScreen extends StatelessWidget {
                       painter: GridPainter(
                         rows: 7,
                         columns: 6,
-                        gridColor: Colors.white.withOpacity(0.3),
+                        gridColor: AppColors.primaryTranslucent,
                       ),
                     ),
                   ),
+                  operationCards[operationProvider.selectedOperationIndex],
                 ],
               ),
             ),
