@@ -1,55 +1,73 @@
-import 'package:flutter/widgets.dart' show BuildContext, MediaQuery, MediaQueryData, Orientation, Size;
+import 'package:flutter/material.dart'
+    show
+        BuildContext,
+        MediaQuery,
+        MediaQueryData,
+        Orientation,
+        Size;
 
-/// Holds the real screen metrics so [getProportionateHeight] and
-/// [getProportionateScreenWidth] can scale design units to the device.
-///
-/// The design is authored against a fixed 375 x 812 canvas. Call [initData]
-/// once (ideally in `main`) before any widget builds.
+//Must be called on Initialization
 class ScreenSize {
-  ScreenSize._();
-
-  /// Design reference dimensions.
-  static const double designWidth = 375;
-  static const double designHeight = 812;
+  // Design reference sizes used as safe defaults if metrics are not yet ready.
+  static const double _designWidth = 375;
+  static const double _designHeight = 812;
 
   static MediaQueryData _mediaQueryData = const MediaQueryData(
-    size: Size(designWidth, designHeight),
+    size: Size(_designWidth, _designHeight),
   );
+  static double screenWidth = _designWidth;
+  static double screenHeight = _designHeight;
+  static double defaultSize = _designHeight;
   static Orientation orientation = Orientation.portrait;
 
-  static void init(BuildContext context) => initData(MediaQuery.of(context));
+  void init(BuildContext context) {
+    initData(MediaQuery.of(context));
+  }
 
-  static void initData(MediaQueryData data) {
-    if (data.size.width <= 0 || data.size.height <= 0) return;
-    _mediaQueryData = data;
-    orientation = data.orientation;
+  static void initData(MediaQueryData mediaQueryData) {
+    // Ignore zero/negative metrics reported before the first real layout.
+    if (mediaQueryData.size.width <= 0 || mediaQueryData.size.height <= 0) {
+      return;
+    }
+    _mediaQueryData = mediaQueryData;
+    screenWidth = mediaQueryData.size.width;
+    screenHeight = mediaQueryData.size.height;
+    orientation = mediaQueryData.orientation;
   }
 }
 
-/// Scales a design height to the current screen.
+// Get the proportionate height as per screen size
 double getProportionateHeight(double inputHeight) {
-  // Phones (shortest side < 600): portrait divides by design height, landscape
-  // by 360. Larger devices (tablets) always divide by design height.
+  double screenHeight = ScreenSize.screenHeight;
+  // 812 is the layout height the designer used
+
+  // shortestSide helps determine the type of device
+  // if less than 600, then it is a phone
   if (ScreenSize._mediaQueryData.size.shortestSide < 600) {
     if (ScreenSize.orientation == Orientation.portrait) {
-      return (inputHeight / ScreenSize.designHeight) *
-          ScreenSize._mediaQueryData.size.height;
+      return (inputHeight / 812.0) * screenHeight;
+    } else {
+      return (inputHeight / 360.0) * screenHeight;
     }
-    return (inputHeight / 360.0) * ScreenSize._mediaQueryData.size.height;
   }
-  return (inputHeight / ScreenSize.designHeight) *
-      ScreenSize._mediaQueryData.size.height;
+
+  return (inputHeight / 812.0) * screenHeight;
 }
 
-/// Scales a design width to the current screen.
+// Get the proportionate height as per screen size
 double getProportionateScreenWidth(double inputWidth) {
+  double screenWidth = ScreenSize.screenWidth;
+  // 375 is the layout width that designer use
+
+  // shortestSide helps determine the type of device
+  // if less than 600, then it is a phone
   if (ScreenSize._mediaQueryData.size.shortestSide < 600) {
     if (ScreenSize.orientation == Orientation.portrait) {
-      return (inputWidth / ScreenSize.designWidth) *
-          ScreenSize._mediaQueryData.size.width;
+      return (inputWidth / 375.0) * screenWidth;
+    } else {
+      return (inputWidth / 800.0) * screenWidth;
     }
-    return (inputWidth / 800.0) * ScreenSize._mediaQueryData.size.width;
   }
-  return (inputWidth / ScreenSize.designWidth) *
-      ScreenSize._mediaQueryData.size.width;
+
+  return (inputWidth / 375.0) * screenWidth;
 }
