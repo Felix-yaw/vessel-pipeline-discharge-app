@@ -12,7 +12,6 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ScreenSize.initData(MediaQuery.of(context));
     return MaterialApp(
       theme: ThemeData(
         useMaterial3: false,
@@ -20,9 +19,14 @@ class MainApp extends StatelessWidget {
         scaffoldBackgroundColor: AppColors.backgroundColor,
       ),
       debugShowCheckedModeBanner: false,
-      home: const HomeScreen(),
+      home: Builder(
+        builder: (context) {
+          // Initialize inside MaterialApp so MediaQuery is the real view size
+          // on the first frame (reading it above the app got the default).
+          ScreenSize.initData(MediaQuery.of(context));
+          return const HomeScreen();
+        },
+      ),
     );
   }
 }
-
-/// Initializes [ScreenSize] with the real MediaQuery dimensions.

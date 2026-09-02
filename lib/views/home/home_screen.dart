@@ -31,35 +31,26 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       backgroundColor: AppColors.backgroundColor,
       body: _selectedIndex == 0
-          ? _HomeTabContent(
-              onNavTap: _handleNavTap,
-              selectedIndex: _selectedIndex,
-            )
-          : Column(
-              children: [
-                Expanded(
-                  child: _selectedIndex == 1
-                      ? const HistoryScreen()
-                      : const AlertsScreen(),
-                ),
-                CustomBottomNavBar(
-                  selectedIndex: _selectedIndex,
-                  onTap: _handleNavTap,
-                ),
-              ],
-            ),
+          ? const _HomeTabContent()
+          : _selectedIndex == 1
+              ? const HistoryScreen()
+              : const AlertsScreen(),
+      // Fixed position, not flush at the bottom. Keeps the bar at the same
+      // point on every tab (matches the natural home position: 30.33 above
+      // the design bottom).
+      bottomNavigationBar: Padding(
+        padding: EdgeInsets.only(bottom: getProportionateHeight(30.33)),
+        child: CustomBottomNavBar(
+          selectedIndex: _selectedIndex,
+          onTap: _handleNavTap,
+        ),
+      ),
     );
   }
 }
 
 class _HomeTabContent extends StatefulWidget {
-  final int selectedIndex;
-  final ValueChanged<int> onNavTap;
-
-  const _HomeTabContent({
-    required this.selectedIndex,
-    required this.onNavTap,
-  });
+  const _HomeTabContent();
 
   @override
   State<_HomeTabContent> createState() => _HomeTabContentState();
@@ -172,11 +163,6 @@ class _HomeTabContentState extends State<_HomeTabContent> {
                 right: getProportionateScreenWidth(20),
               ),
               child: StationStatus(status: _stationStatus),
-            ),
-            SizedBox(height: getProportionateHeight(32.67)),
-            CustomBottomNavBar(
-              selectedIndex: widget.selectedIndex,
-              onTap: widget.onNavTap,
             ),
           ],
         ),

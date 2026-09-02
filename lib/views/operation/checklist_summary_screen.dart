@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:vessel_pipeline_discharge_app/core/constants/colors.dart';
 import 'package:vessel_pipeline_discharge_app/core/constants/size_config.dart';
 import 'package:vessel_pipeline_discharge_app/models/operation_models.dart';
-import 'package:vessel_pipeline_discharge_app/views/operation/hourly_readings_screen.dart';
 import 'package:vessel_pipeline_discharge_app/widgets/layout/page_header.dart';
 
 /// Screen showing summary of all completed readings.
