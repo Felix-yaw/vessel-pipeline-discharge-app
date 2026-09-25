@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:vessel_pipeline_discharge_app/provider/operation_controller.dart';
+import 'package:vessel_pipeline_discharge_app/provider/operation_provider.dart';
 import 'package:vessel_pipeline_discharge_app/core/constants/colors.dart';
 import 'package:vessel_pipeline_discharge_app/core/constants/size_config.dart';
 import 'package:vessel_pipeline_discharge_app/views/operation/tank_farm_readings_screen.dart';
@@ -83,7 +83,9 @@ class _ChecklistValidationScreenState extends State<ChecklistValidationScreen> {
                 width: getProportionateScreenWidth(336),
                 height: getProportionateHeight(56),
                 onPressed: _allChecked ? _handleSendRequest : null,
-                backgroundColor: _allChecked ? null : AppColors.primaryTranslucent,
+                backgroundColor: _allChecked
+                    ? null
+                    : AppColors.primaryTranslucent,
                 textColor: _allChecked ? null : AppColors.white,
               ),
             ),

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:vessel_pipeline_discharge_app/core/constants/colors.dart';
 import 'package:vessel_pipeline_discharge_app/core/constants/size_config.dart';
-import 'package:vessel_pipeline_discharge_app/views/operation/confirm_operation_screen.dart';
 import 'package:vessel_pipeline_discharge_app/widgets/buttons/gradient_button.dart';
 import 'package:vessel_pipeline_discharge_app/widgets/fields/custom_text_field.dart';
 import 'package:vessel_pipeline_discharge_app/widgets/layout/page_header.dart';
@@ -75,16 +74,7 @@ class NewOperationScreen extends StatelessWidget {
                 label: 'Continue',
                 width: getProportionateScreenWidth(336),
                 height: getProportionateHeight(56),
-                onPressed: () async {
-                  final result = await Navigator.of(context).push<bool>(
-                    MaterialPageRoute(
-                      builder: (_) => const ConfirmOperationScreen(),
-                    ),
-                  );
-                  if (result == true && context.mounted) {
-                    Navigator.of(context).pop(true);
-                  }
-                },
+                onPressed: () => Navigator.of(context).pop(true),
               ),
             ),
           ],

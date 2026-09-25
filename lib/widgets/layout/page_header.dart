@@ -13,6 +13,10 @@ class PageHeader extends StatelessWidget {
   final String? name;
   final String? code;
   final bool showBack;
+  final FontWeight titleFontWeight;
+  final Color titleColor;
+  final double topHeight;
+  final bool showSearch;
 
   const PageHeader({
     super.key,
@@ -20,6 +24,10 @@ class PageHeader extends StatelessWidget {
     this.name,
     this.code,
     this.showBack = true,
+    this.titleFontWeight = FontWeight.w600,
+    this.titleColor = AppColors.primaryColor,
+    this.topHeight = 62,
+    this.showSearch = false,
   });
 
   @override
@@ -34,10 +42,7 @@ class PageHeader extends StatelessWidget {
       child: Stack(
         fit: StackFit.expand,
         children: [
-          SvgPicture.asset(
-            'assets/images/background2.svg',
-            fit: BoxFit.cover,
-          ),
+          SvgPicture.asset('assets/images/background2.svg', fit: BoxFit.cover),
           if (showBack)
             Positioned(
               left: getProportionateScreenWidth(16),
@@ -67,19 +72,52 @@ class PageHeader extends StatelessWidget {
             ),
           Positioned(
             left: getProportionateScreenWidth(16),
-            right: getProportionateScreenWidth(16),
-            top: getProportionateHeight(62),
+            right: showSearch ? 0 : topHeight,
+            top: getProportionateHeight(showBack ? 62 : 20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   title,
                   style: TextStyle(
-                    color: AppColors.greyColor,
+                    color: titleColor,
                     fontSize: getProportionateHeight(20),
-                    fontWeight: FontWeight.w600,
+                    fontWeight: titleFontWeight,
                   ),
                 ),
+                if (showSearch) ...[
+                  SizedBox(height: getProportionateHeight(8)),
+                  Text(
+                    'Filters',
+                    style: TextStyle(
+                      color: AppColors.greyColor,
+                      fontSize: getProportionateHeight(13),
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  SizedBox(height: getProportionateHeight(4)),
+                  Row(
+                    children: [
+                      const _HeaderSearchBox(),
+                      SizedBox(width: getProportionateScreenWidth(8)),
+                      Container(
+                        width: getProportionateScreenWidth(40),
+                        height: getProportionateHeight(40),
+                        decoration: BoxDecoration(
+                          color: AppColors.primaryColor,
+                          borderRadius: BorderRadius.circular(
+                            getProportionateHeight(12),
+                          ),
+                        ),
+                        child: Icon(
+                          Icons.calendar_today_outlined,
+                          color: AppColors.white,
+                          size: getProportionateHeight(18),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
                 if (name != null) ...[
                   SizedBox(height: getProportionateHeight(4)),
                   Row(
@@ -113,6 +151,41 @@ class PageHeader extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _HeaderSearchBox extends StatelessWidget {
+  const _HeaderSearchBox();
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: getProportionateHeight(40),
+      width: getProportionateScreenWidth(260),
+      child: TextField(
+        decoration: InputDecoration(
+          hintText: 'Search',
+          hintStyle: TextStyle(
+            color: AppColors.greyColor,
+            fontSize: getProportionateHeight(14),
+          ),
+          contentPadding: EdgeInsets.symmetric(
+            horizontal: getProportionateScreenWidth(12),
+          ),
+          filled: true,
+          fillColor: AppColors.white,
+          suffixIcon: Icon(
+            Icons.search,
+            color: AppColors.primaryColor,
+            size: getProportionateHeight(20),
+          ),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(getProportionateHeight(12)),
+            borderSide: BorderSide.none,
+          ),
+        ),
       ),
     );
   }

@@ -3,6 +3,7 @@ import 'package:vessel_pipeline_discharge_app/core/constants/colors.dart';
 import 'package:vessel_pipeline_discharge_app/core/constants/size_config.dart';
 import 'package:vessel_pipeline_discharge_app/models/operation_models.dart';
 import 'package:vessel_pipeline_discharge_app/views/operation/checklist_summary_screen.dart';
+import 'package:vessel_pipeline_discharge_app/views/operation/confirm_operation_screen.dart';
 import 'package:vessel_pipeline_discharge_app/views/operation/hourly_readings_screen.dart';
 import 'package:vessel_pipeline_discharge_app/views/operation/initial_readings_screen.dart';
 import 'package:vessel_pipeline_discharge_app/views/operation/new_operation_screen.dart';
@@ -72,7 +73,12 @@ class _OperationCardState extends State<OperationCard> {
     final result = await Navigator.of(context).push<bool>(
       MaterialPageRoute(builder: (_) => const InitialReadingsScreen()),
     );
-    if (result == true && mounted) {
+    if (result != true || !mounted) return;
+
+    final bool? requested = await Navigator.of(context).push<bool>(
+      MaterialPageRoute(builder: (_) => const ConfirmOperationScreen()),
+    );
+    if (requested == true && mounted) {
       setState(() => _step = _OperationStep.startDischarge);
       widget.onStartDischarge?.call();
     }
