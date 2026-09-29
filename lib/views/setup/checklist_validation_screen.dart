@@ -5,7 +5,7 @@ import 'package:vessel_pipeline_discharge_app/core/constants/colors.dart';
 import 'package:vessel_pipeline_discharge_app/core/constants/size_config.dart';
 import 'package:vessel_pipeline_discharge_app/views/operation/tank_farm_readings_screen.dart';
 import 'package:vessel_pipeline_discharge_app/widgets/buttons/gradient_button.dart';
-import 'package:vessel_pipeline_discharge_app/widgets/layout/operation_scaffold.dart';
+import 'package:vessel_pipeline_discharge_app/widgets/layout/page_header.dart';
 
 /// Page 3 - Checklist Validation.
 ///
@@ -29,7 +29,7 @@ class _ChecklistValidationScreenState extends State<ChecklistValidationScreen> {
 
   Future<void> _handleSendRequest() async {
     if (!_allChecked) return;
-    context.read<OperationProvider>().submitChecklist();
+    context.read<OperationController>().submitChecklist();
     final bool? result = await Navigator.of(context).push<bool>(
       MaterialPageRoute(builder: (_) => const TankFarmReadingsScreen()),
     );
@@ -40,33 +40,57 @@ class _ChecklistValidationScreenState extends State<ChecklistValidationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final OperationProvider controller = context.read<OperationProvider>();
-    return OperationScaffold(
-      title: 'Completed Checklist',
-      name: controller.operation.vesselName,
-      code: controller.operation.vesselCode,
-      bottom: GradientButton(
-        label: 'Send Request',
-        width: getProportionateScreenWidth(336),
-        height: getProportionateHeight(56),
-        onPressed: _allChecked ? _handleSendRequest : null,
-        backgroundColor: _allChecked ? null : AppColors.primaryTranslucent,
-        textColor: _allChecked ? null : AppColors.white,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Is your safety checklist completed?',
-            style: TextStyle(
-              color: AppColors.greyColor,
-              fontSize: getProportionateHeight(16),
-              fontWeight: FontWeight.w400,
+    final OperationController controller = context.read<OperationController>();
+    return Scaffold(
+      backgroundColor: AppColors.backgroundColor,
+      body: Padding(
+        padding: EdgeInsets.only(
+          top: getProportionateHeight(54),
+          left: getProportionateScreenWidth(20),
+          right: getProportionateScreenWidth(20),
+        ),
+        child: Column(
+          children: [
+            PageHeader(
+              title: 'Completed Checklist',
+              name: controller.operation.vesselName,
+              code: controller.operation.vesselCode,
             ),
-          ),
-          SizedBox(height: getProportionateHeight(24)),
-          ...List.generate(_equipment.length, _buildCheckTile),
-        ],
+            SizedBox(height: getProportionateHeight(24)),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Is your safety checklist completed?',
+                      style: TextStyle(
+                        color: AppColors.greyColor,
+                        fontSize: getProportionateHeight(16),
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                    SizedBox(height: getProportionateHeight(24)),
+                    ...List.generate(_equipment.length, _buildCheckTile),
+                  ],
+                ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(bottom: getProportionateHeight(20)),
+              child: GradientButton(
+                label: 'Send Request',
+                width: getProportionateScreenWidth(336),
+                height: getProportionateHeight(56),
+                onPressed: _allChecked ? _handleSendRequest : null,
+                backgroundColor: _allChecked
+                    ? null
+                    : AppColors.primaryTranslucent,
+                textColor: _allChecked ? null : AppColors.white,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:vessel_pipeline_discharge_app/core/constants/colors.dart';
 import 'package:vessel_pipeline_discharge_app/core/constants/size_config.dart';
 import 'package:vessel_pipeline_discharge_app/models/operation_models.dart';
-import 'package:vessel_pipeline_discharge_app/widgets/layout/operation_scaffold.dart';
+import 'package:vessel_pipeline_discharge_app/widgets/layout/page_header.dart';
 
 /// Screen showing summary of all completed readings.
 class ChecklistSummaryScreen extends StatelessWidget {
@@ -17,55 +17,78 @@ class ChecklistSummaryScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return OperationScaffold(
-      title: 'Summary',
-      name: vesselName,
-      code: 'VES 101203',
-      safeArea: true,
-      contentPadding: EdgeInsets.symmetric(
-        horizontal: getProportionateScreenWidth(20),
-        vertical: getProportionateHeight(24),
-      ),
-      bottomBar: true,
-      bottom: Container(
-        width: double.infinity,
-        color: AppColors.backgroundColor,
-        padding: EdgeInsets.symmetric(
-          horizontal: getProportionateScreenWidth(20),
-          vertical: getProportionateHeight(16),
-        ),
-        child: SizedBox(
-          width: double.infinity,
-          height: getProportionateHeight(56),
-          child: ElevatedButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF3B52A7),
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
+    return Scaffold(
+      backgroundColor: AppColors.backgroundColor,
+      body: SafeArea(
+        child: Column(
+          children: [
+            Padding(
+              padding: EdgeInsets.only(
+                top: getProportionateHeight(54),
+                left: getProportionateScreenWidth(20),
+                right: getProportionateScreenWidth(20),
+              ),
+              child: PageHeader(
+                title: 'Summary',
+                name: vesselName,
+                code: 'VES 101203',
               ),
             ),
-            child: Text(
-              'Continue',
-              style: TextStyle(
-                fontSize: getProportionateHeight(18),
-                fontWeight: FontWeight.w600,
+            SizedBox(height: getProportionateHeight(24)),
+
+            /// Form content
+            Expanded(
+              child: SingleChildScrollView(
+                padding: EdgeInsets.symmetric(
+                  horizontal: getProportionateScreenWidth(20),
+                  vertical: getProportionateHeight(24),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ...hourlyReadings.map((reading) => Padding(
+                          padding: EdgeInsets.only(
+                            bottom: getProportionateHeight(16),
+                          ),
+                          child: _buildHourCard(context, reading),
+                        )),
+                  ],
+                ),
               ),
             ),
-          ),
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ...hourlyReadings.map(
-            (reading) => Padding(
-              padding: EdgeInsets.only(bottom: getProportionateHeight(16)),
-              child: _buildHourCard(context, reading),
+
+            /// Submit button
+            Container(
+              width: double.infinity,
+              color: AppColors.backgroundColor,
+              padding: EdgeInsets.symmetric(
+                horizontal: getProportionateScreenWidth(20),
+                vertical: getProportionateHeight(16),
+              ),
+              child: SizedBox(
+                width: double.infinity,
+                height: getProportionateHeight(56),
+                child: ElevatedButton(
+                  onPressed: () => Navigator.of(context).pop(true),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF3B52A7),
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                  ),
+                  child: Text(
+                    'Continue',
+                    style: TextStyle(
+                      fontSize: getProportionateHeight(18),
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

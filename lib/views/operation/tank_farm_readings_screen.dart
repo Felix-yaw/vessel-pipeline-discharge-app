@@ -7,7 +7,7 @@ import 'package:vessel_pipeline_discharge_app/views/operation/initial_check_conf
 import 'package:vessel_pipeline_discharge_app/widgets/buttons/gradient_button.dart';
 import 'package:vessel_pipeline_discharge_app/widgets/fields/custom_text_field.dart';
 import 'package:vessel_pipeline_discharge_app/widgets/layout/bottom_action_bar.dart';
-import 'package:vessel_pipeline_discharge_app/widgets/layout/operation_scaffold.dart';
+import 'package:vessel_pipeline_discharge_app/widgets/layout/page_header.dart';
 
 /// Page 4 - Tank Farm Initial Readings.
 ///
@@ -41,7 +41,7 @@ class _TankFarmReadingsScreenState extends State<TankFarmReadingsScreen> {
 
   Future<void> _handleSubmit() async {
     if (!_isValid) return;
-    context.read<OperationProvider>().submitInitialReadings(
+    context.read<OperationController>().submitInitialReadings(
       flowMeterReading: _flowMeterReading.text.trim(),
     );
     final bool? result = await Navigator.of(context).push<bool>(
@@ -54,40 +54,58 @@ class _TankFarmReadingsScreenState extends State<TankFarmReadingsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final OperationProvider controller = context.read<OperationProvider>();
-    return OperationScaffold(
-      title: 'Tank Farm Initial Readings',
-      name: controller.operation.vesselName,
-      code: controller.operation.vesselCode,
-      bottomBar: true,
-      bottom: BottomActionBar(
-        child: GradientButton(
-          label: 'Submit',
-          width: getProportionateScreenWidth(336),
-          height: getProportionateHeight(56),
-          onPressed: _isValid ? _handleSubmit : null,
-          backgroundColor: _isValid ? null : AppColors.primaryTranslucent,
-          textColor: _isValid ? null : AppColors.white,
+    final OperationController controller = context.read<OperationController>();
+    return Scaffold(
+      backgroundColor: AppColors.backgroundColor,
+      body: Padding(
+        padding: EdgeInsets.only(
+          top: getProportionateHeight(54),
+          left: getProportionateScreenWidth(20),
+          right: getProportionateScreenWidth(20),
         ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Record opening readings before discharge begins',
-            style: TextStyle(
-              color: AppColors.greyColor,
-              fontSize: getProportionateHeight(16),
-              fontWeight: FontWeight.w400,
+        child: Column(
+          children: [
+            PageHeader(
+              title: 'Tank Farm Initial Readings',
+              name: controller.operation.vesselName,
+              code: controller.operation.vesselCode,
             ),
-          ),
-          SizedBox(height: getProportionateHeight(38)),
-          CustomTextField(
-            title: 'Flow Meter Reading',
-            hintText: '0.00',
-            controller: _flowMeterReading,
-          ),
-        ],
+            SizedBox(height: getProportionateHeight(24)),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Record opening readings before discharge begins',
+                      style: TextStyle(
+                        color: AppColors.greyColor,
+                        fontSize: getProportionateHeight(16),
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                    SizedBox(height: getProportionateHeight(38)),
+                    CustomTextField(
+                      title: 'Flow Meter Reading',
+                      hintText: '0.00',
+                      controller: _flowMeterReading,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            BottomActionBar(
+              child: GradientButton(
+                label: 'Submit',
+                width: getProportionateScreenWidth(336),
+                height: getProportionateHeight(56),
+                onPressed: _isValid ? _handleSubmit : null,
+                backgroundColor: _isValid ? null : AppColors.primaryTranslucent,
+                textColor: _isValid ? null : AppColors.white,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

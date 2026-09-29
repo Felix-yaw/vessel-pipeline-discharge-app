@@ -8,7 +8,7 @@ import 'package:vessel_pipeline_discharge_app/models/operation_models.dart';
 import 'package:vessel_pipeline_discharge_app/widgets/buttons/gradient_button.dart';
 import 'package:vessel_pipeline_discharge_app/widgets/fields/custom_text_field.dart';
 import 'package:vessel_pipeline_discharge_app/widgets/layout/bottom_action_bar.dart';
-import 'package:vessel_pipeline_discharge_app/widgets/layout/operation_scaffold.dart';
+import 'package:vessel_pipeline_discharge_app/widgets/layout/page_header.dart';
 
 /// Page 6b - Hourly Reading Form.
 ///
@@ -53,7 +53,7 @@ class _HourlyReadingFormScreenState extends State<HourlyReadingFormScreen> {
 
   Future<void> _handleSubmit() async {
     if (!_isValid) return;
-    final OperationProvider controller = context.read<OperationProvider>();
+    final OperationController controller = context.read<OperationController>();
     final int hour = controller.operation.hourlyReadings.length + 1;
     controller.recordHourlyReading(
       HourlyReadingData(
@@ -68,68 +68,86 @@ class _HourlyReadingFormScreenState extends State<HourlyReadingFormScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final OperationProvider controller = context.watch<OperationProvider>();
+    final OperationController controller = context.watch<OperationController>();
     final int hour = controller.operation.hourlyReadings.length + 1;
     final DateTime now = DateTime.now();
 
-    return OperationScaffold(
-      title: 'Hourly Readings',
-      name: controller.operation.vesselName,
-      code: controller.operation.vesselCode,
-      bottomBar: true,
-      bottom: BottomActionBar(
-        child: GradientButton(
-          label: 'Submit',
-          width: getProportionateScreenWidth(336),
-          height: getProportionateHeight(56),
-          onPressed: _isValid ? _handleSubmit : null,
-          backgroundColor: _isValid ? null : AppColors.primaryTranslucent,
-          textColor: _isValid ? null : AppColors.white,
+    return Scaffold(
+      backgroundColor: AppColors.backgroundColor,
+      body: Padding(
+        padding: EdgeInsets.only(
+          top: getProportionateHeight(54),
+          left: getProportionateScreenWidth(20),
+          right: getProportionateScreenWidth(20),
         ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Hour ${hour.toString().padLeft(2, '0')}',
-                style: TextStyle(
-                  color: AppColors.secondaryColor,
-                  fontSize: getProportionateHeight(16),
-                  fontWeight: FontWeight.w400,
+        child: Column(
+          children: [
+            PageHeader(
+              title: 'Hourly Readings',
+              name: controller.operation.vesselName,
+              code: controller.operation.vesselCode,
+            ),
+            SizedBox(height: getProportionateHeight(24)),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Hour ${hour.toString().padLeft(2, '0')}',
+                          style: TextStyle(
+                            color: AppColors.secondaryColor,
+                            fontSize: getProportionateHeight(16),
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                        Text(
+                          formatDateTime(now),
+                          style: TextStyle(
+                            color: AppColors.secondaryColor,
+                            fontSize: getProportionateHeight(16),
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: getProportionateHeight(24)),
+                    CustomTextField(
+                      title: 'Flow Meter Reading',
+                      hintText: '0.00',
+                      controller: _flowRate,
+                    ),
+                    SizedBox(height: getProportionateHeight(16)),
+                    CustomTextField(
+                      title: 'Tank Level A',
+                      hintText: '0.00',
+                      controller: _tankLevelA,
+                    ),
+                    SizedBox(height: getProportionateHeight(16)),
+                    CustomTextField(
+                      title: 'Tank Level B',
+                      hintText: '0.00',
+                      controller: _tankLevelB,
+                    ),
+                  ],
                 ),
               ),
-              Text(
-                formatDateTime(now),
-                style: TextStyle(
-                  color: AppColors.secondaryColor,
-                  fontSize: getProportionateHeight(16),
-                  fontWeight: FontWeight.w400,
-                ),
+            ),
+            BottomActionBar(
+              child: GradientButton(
+                label: 'Submit',
+                width: getProportionateScreenWidth(336),
+                height: getProportionateHeight(56),
+                onPressed: _isValid ? _handleSubmit : null,
+                backgroundColor: _isValid ? null : AppColors.primaryTranslucent,
+                textColor: _isValid ? null : AppColors.white,
               ),
-            ],
-          ),
-          SizedBox(height: getProportionateHeight(24)),
-          CustomTextField(
-            title: 'Flow Meter Reading',
-            hintText: '0.00',
-            controller: _flowRate,
-          ),
-          SizedBox(height: getProportionateHeight(16)),
-          CustomTextField(
-            title: 'Tank Level A',
-            hintText: '0.00',
-            controller: _tankLevelA,
-          ),
-          SizedBox(height: getProportionateHeight(16)),
-          CustomTextField(
-            title: 'Tank Level B',
-            hintText: '0.00',
-            controller: _tankLevelB,
-          ),
-        ],
+            ),
+          ],
+        ),
       ),
     );
   }

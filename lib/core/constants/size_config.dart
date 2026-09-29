@@ -1,44 +1,26 @@
 import 'package:flutter/material.dart'
-    show
-        BuildContext,
-        MediaQuery,
-        MediaQueryData,
-        Orientation,
-        Size;
+    show BuildContext, MediaQuery, MediaQueryData, Orientation;
 
-//Must be called on Initialization
+// Must be called on initialization.
 class ScreenSize {
-  // Design reference sizes used as safe defaults if metrics are not yet ready.
-  static const double _designWidth = 375;
-  static const double _designHeight = 812;
-
-  static MediaQueryData _mediaQueryData = const MediaQueryData(
-    size: Size(_designWidth, _designHeight),
-  );
-  static double screenWidth = _designWidth;
-  static double screenHeight = _designHeight;
-  static double defaultSize = _designHeight;
-  static Orientation orientation = Orientation.portrait;
+  static late MediaQueryData _mediaQueryData;
+  static late double screenWidth;
+  static late double screenHeight;
+  static late double defaultSize;
+  static late Orientation orientation;
 
   void init(BuildContext context) {
-    initData(MediaQuery.of(context));
-  }
-
-  static void initData(MediaQueryData mediaQueryData) {
-    // Ignore zero/negative metrics reported before the first real layout.
-    if (mediaQueryData.size.width <= 0 || mediaQueryData.size.height <= 0) {
-      return;
-    }
-    _mediaQueryData = mediaQueryData;
-    screenWidth = mediaQueryData.size.width;
-    screenHeight = mediaQueryData.size.height;
-    orientation = mediaQueryData.orientation;
+    _mediaQueryData = MediaQuery.of(context);
+    screenWidth = _mediaQueryData.size.width;
+    screenHeight = _mediaQueryData.size.height;
+    defaultSize = screenHeight;
+    orientation = _mediaQueryData.orientation;
   }
 }
 
 // Get the proportionate height as per screen size
 double getProportionateHeight(double inputHeight) {
-  double screenHeight = ScreenSize.screenHeight;
+  final double screenHeight = ScreenSize.screenHeight;
   // 812 is the layout height the designer used
 
   // shortestSide helps determine the type of device
@@ -54,10 +36,10 @@ double getProportionateHeight(double inputHeight) {
   return (inputHeight / 812.0) * screenHeight;
 }
 
-// Get the proportionate height as per screen size
+// Get the proportionate width as per screen size
 double getProportionateScreenWidth(double inputWidth) {
-  double screenWidth = ScreenSize.screenWidth;
-  // 375 is the layout width that designer use
+  final double screenWidth = ScreenSize.screenWidth;
+  // 375 is the layout width the designer used
 
   // shortestSide helps determine the type of device
   // if less than 600, then it is a phone

@@ -6,7 +6,7 @@ import 'package:vessel_pipeline_discharge_app/core/constants/size_config.dart';
 import 'package:vessel_pipeline_discharge_app/views/setup/checklist_validation_screen.dart';
 import 'package:vessel_pipeline_discharge_app/widgets/buttons/gradient_button.dart';
 import 'package:vessel_pipeline_discharge_app/widgets/fields/custom_text_field.dart';
-import 'package:vessel_pipeline_discharge_app/widgets/layout/operation_scaffold.dart';
+import 'package:vessel_pipeline_discharge_app/widgets/layout/page_header.dart';
 
 /// Page 2 - Jetty Checklist Details.
 ///
@@ -44,7 +44,7 @@ class _JettyChecklistScreenState extends State<JettyChecklistScreen> {
 
   Future<void> _handleContinue() async {
     if (!_isValid) return;
-    context.read<OperationProvider>().beginSetup(
+    context.read<OperationController>().beginSetup(
       vesselName: _vesselName.text.trim(),
       vesselType: _vesselType.text.trim(),
     );
@@ -58,40 +58,60 @@ class _JettyChecklistScreenState extends State<JettyChecklistScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return OperationScaffold(
-      title: 'Jetty Checklist',
-      bottom: GradientButton(
-        label: 'Continue',
-        width: getProportionateScreenWidth(336),
-        height: getProportionateHeight(56),
-        onPressed: _isValid ? _handleContinue : null,
-        backgroundColor: _isValid ? null : AppColors.primaryTranslucent,
-        textColor: _isValid ? null : AppColors.white,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Enter the information to begin the discharge operation',
-            style: TextStyle(
-              color: AppColors.greyColor,
-              fontSize: getProportionateHeight(16),
-              fontWeight: FontWeight.w400,
+    return Scaffold(
+      backgroundColor: AppColors.backgroundColor,
+      body: Padding(
+        padding: EdgeInsets.only(
+          top: getProportionateHeight(54),
+          left: getProportionateScreenWidth(20),
+          right: getProportionateScreenWidth(20),
+        ),
+        child: Column(
+          children: [
+            const PageHeader(title: 'Jetty Checklist'),
+            SizedBox(height: getProportionateHeight(24)),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Enter the information to begin the discharge operation',
+                      style: TextStyle(
+                        color: AppColors.greyColor,
+                        fontSize: getProportionateHeight(16),
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                    SizedBox(height: getProportionateHeight(40)),
+                    CustomTextField(
+                      title: 'Vessel Name',
+                      hintText: 'e.g. MT African Spirit',
+                      controller: _vesselName,
+                    ),
+                    SizedBox(height: getProportionateHeight(24)),
+                    CustomTextField(
+                      title: 'Vessel Type',
+                      hintText: 'e.g. Tanker',
+                      controller: _vesselType,
+                    ),
+                  ],
+                ),
+              ),
             ),
-          ),
-          SizedBox(height: getProportionateHeight(40)),
-          CustomTextField(
-            title: 'Vessel Name',
-            hintText: 'e.g. MT African Spirit',
-            controller: _vesselName,
-          ),
-          SizedBox(height: getProportionateHeight(24)),
-          CustomTextField(
-            title: 'Vessel Type',
-            hintText: 'e.g. Tanker',
-            controller: _vesselType,
-          ),
-        ],
+            Padding(
+              padding: EdgeInsets.only(bottom: getProportionateHeight(20)),
+              child: GradientButton(
+                label: 'Continue',
+                width: getProportionateScreenWidth(336),
+                height: getProportionateHeight(56),
+                onPressed: _isValid ? _handleContinue : null,
+                backgroundColor: _isValid ? null : AppColors.primaryTranslucent,
+                textColor: _isValid ? null : AppColors.white,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
