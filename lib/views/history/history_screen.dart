@@ -30,18 +30,51 @@ class HistoryScreen extends StatelessWidget {
           ),
         ),
       ),
-      body: ListView.separated(
-        itemCount: 2,
-        separatorBuilder: (context, index) =>
-            SizedBox(height: getProportionateHeight(1)),
-        itemBuilder: (context, index) => SingleChildScrollView(
-          padding: EdgeInsets.fromLTRB(
-            getProportionateScreenWidth(20),
-            getProportionateHeight(9),
-            getProportionateScreenWidth(20),
-            getProportionateHeight(32),
-          ),
-          child: const _HistoryCard(),
+      body: ListView(
+        padding: EdgeInsets.zero,
+        children: [
+          SizedBox(height: getProportionateHeight(9)),
+          const Center(child: _TodayPill('Today 12 Feb 2099')),
+          SizedBox(height: getProportionateHeight(18)),
+          for (int i = 0; i < 2; i++)
+            Padding(
+              padding: EdgeInsets.fromLTRB(
+                getProportionateScreenWidth(20),
+                0,
+                getProportionateScreenWidth(20),
+                getProportionateHeight(32),
+              ),
+              child: const _HistoryCard(),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Rounded date label shown above the day's operation cards.
+class _TodayPill extends StatelessWidget {
+  final String label;
+
+  const _TodayPill(this.label);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: getProportionateScreenWidth(24),
+        vertical: getProportionateHeight(10),
+      ),
+      decoration: BoxDecoration(
+        color: AppColors.tabColor,
+        borderRadius: BorderRadius.circular(getProportionateHeight(20)),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(
+          color: AppColors.secondaryColor,
+          fontSize: getProportionateHeight(16),
+          fontWeight: FontWeight.w500,
         ),
       ),
     );

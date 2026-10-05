@@ -10,7 +10,7 @@ import 'package:vessel_pipeline_discharge_app/widgets/layout/page_header.dart';
 /// Screen shown when recording hourly readings.
 ///
 /// Returns the entered readings as an [HourlyReadingData] via `Navigator.pop`
-/// so the summary page can display them.
+/// so the flow can continue once a reading is captured.
 class HourlyReadingsScreen extends StatefulWidget {
   const HourlyReadingsScreen({super.key});
 

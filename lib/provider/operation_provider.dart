@@ -25,10 +25,64 @@ class OperationController extends ChangeNotifier {
   Operation _operation = Operation();
   final List<Operation> _completedOperations = [];
 
+  Station _selectedStation = Station.jetty;
+  bool _roleChosen = false;
+  final Set<Station> _readyStations = {Station.jetty};
+  final Set<Station> _stationsWithReadings = {};
+
   OperationState get state => _state;
   Operation get operation => _operation;
   List<Operation> get completedOperations =>
       List.unmodifiable(_completedOperations);
+
+  /// The station whose perspective is currently being shown on Home.
+  Station get selectedStation => _selectedStation;
+
+  /// Whether the operator has picked their station for this session.
+  bool get roleChosen => _roleChosen;
+
+  /// Switches the Home card between the Jetty / Booster / Tank perspective.
+  void selectStation(Station station) {
+    _roleChosen = true;
+    if (_selectedStation == station) {
+      notifyListeners();
+      return;
+    }
+    _selectedStation = station;
+    notifyListeners();
+  }
+
+  /// Whether [station] has confirmed its readiness for the current operation.
+  bool isStationReady(Station station) => _readyStations.contains(station);
+
+  /// Whether every station has confirmed its readiness.
+  bool get allStationsReady =>
+      Station.values.every(_readyStations.contains);
+
+  /// Marks [station] ready once its operator completes the readiness check.
+  void confirmReadiness(Station station) {
+    if (_readyStations.contains(station)) return;
+    _readyStations.add(station);
+    notifyListeners();
+  }
+
+  /// Marks every station ready at once (all readiness checks completed).
+  void confirmAllStationsReady() {
+    if (allStationsReady) return;
+    _readyStations.addAll(Station.values);
+    notifyListeners();
+  }
+
+  /// Whether [station] has submitted its opening (initial) readings.
+  bool hasStationReadings(Station station) =>
+      _stationsWithReadings.contains(station);
+
+  /// Records that [station] submitted its opening readings.
+  void submitStationReadings(Station station) {
+    if (_stationsWithReadings.contains(station)) return;
+    _stationsWithReadings.add(station);
+    notifyListeners();
+  }
 
   bool get hasActiveOperation =>
       _state == OperationState.setup ||
@@ -59,6 +113,10 @@ class OperationController extends ChangeNotifier {
       vesselName: vesselName,
       vesselType: vesselType,
     );
+    _readyStations
+      ..clear()
+      ..add(Station.jetty);
+    _stationsWithReadings.clear();
     _state = OperationState.setup;
     notifyListeners();
   }
@@ -125,6 +183,10 @@ class OperationController extends ChangeNotifier {
     _operation.completedAt = DateTime.now();
     _completedOperations.add(_operation);
     _operation = Operation();
+    _readyStations
+      ..clear()
+      ..add(Station.jetty);
+    _stationsWithReadings.clear();
     _state = OperationState.idle;
     notifyListeners();
   }

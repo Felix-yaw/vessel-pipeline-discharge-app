@@ -14,7 +14,8 @@ class OperationStatusRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool isActive = status == 'Active';
+    final bool isActive =
+        status == 'Active' || status == 'Discharging' || status == 'Ready';
     final Color dotColor = isActive
         ? AppColors.successGreen
         : AppColors.primaryColor;
@@ -25,46 +26,58 @@ class OperationStatusRow extends StatelessWidget {
     return Container(
       width: double.infinity,
       height: getProportionateHeight(42),
-      padding: EdgeInsets.symmetric(
-        horizontal: getProportionateScreenWidth(16),
-        vertical: getProportionateHeight(4),
+      padding: EdgeInsets.fromLTRB(
+        getProportionateScreenWidth(16),
+        getProportionateHeight(8),
+        getProportionateScreenWidth(8),
+        getProportionateHeight(8),
       ),
       decoration: BoxDecoration(
         color: AppColors.tabColor,
         borderRadius: BorderRadius.circular(getProportionateHeight(16)),
       ),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Expanded(
-            child: Text(
-              label,
-              style: TextStyle(
-                fontSize: getProportionateHeight(14),
-                color: AppColors.primaryColor,
-                fontWeight: FontWeight.w600,
-              ),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: getProportionateHeight(14),
+              color: AppColors.primaryColor,
+              fontWeight: FontWeight.w600,
             ),
           ),
-          Row(
-            children: [
-              Container(
-                width: getProportionateHeight(8),
-                height: getProportionateHeight(8),
-                decoration: BoxDecoration(
-                  color: dotColor,
-                  shape: BoxShape.circle,
+          Container(
+            padding: EdgeInsets.symmetric(
+              horizontal: getProportionateScreenWidth(12),
+              vertical: getProportionateHeight(4),
+            ),
+            decoration: BoxDecoration(
+              color: AppColors.white,
+              borderRadius: BorderRadius.circular(getProportionateHeight(31)),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: getProportionateHeight(8),
+                  height: getProportionateHeight(8),
+                  decoration: BoxDecoration(
+                    color: dotColor,
+                    shape: BoxShape.circle,
+                  ),
                 ),
-              ),
-              SizedBox(width: getProportionateScreenWidth(8)),
-              Text(
-                status,
-                style: TextStyle(
-                  color: statusColor,
-                  fontSize: getProportionateHeight(14),
-                  fontWeight: FontWeight.w600,
+                SizedBox(width: getProportionateScreenWidth(8)),
+                Text(
+                  status,
+                  style: TextStyle(
+                    color: statusColor,
+                    fontSize: getProportionateHeight(14),
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ],
       ),

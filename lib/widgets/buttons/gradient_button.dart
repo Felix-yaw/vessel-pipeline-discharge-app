@@ -17,8 +17,10 @@ class GradientButton extends StatelessWidget {
   final double? height;
   final bool showCheckIcon;
   final bool showArrowIcon;
+  final bool showTrailingArrow;
   final Color? backgroundColor;
   final Color? textColor;
+  final Color? borderColor;
 
   const GradientButton({
     super.key,
@@ -28,8 +30,10 @@ class GradientButton extends StatelessWidget {
     this.height,
     this.showCheckIcon = false,
     this.showArrowIcon = false,
+    this.showTrailingArrow = false,
     this.backgroundColor,
     this.textColor,
+    this.borderColor,
   });
 
   @override
@@ -56,6 +60,9 @@ class GradientButton extends StatelessWidget {
                   : null,
               borderRadius:
                   BorderRadius.circular(getProportionateHeight(16)),
+              border: borderColor != null
+                  ? Border.all(color: borderColor!)
+                  : null,
             ),
             child: Stack(
               alignment: Alignment.center,
@@ -79,6 +86,14 @@ class GradientButton extends StatelessWidget {
                         fontWeight: FontWeight.w500,
                       ),
                     ),
+                    if (showTrailingArrow) ...[
+                      SizedBox(width: getProportionateScreenWidth(8)),
+                      Icon(
+                        Icons.arrow_forward_rounded,
+                        color: contentColor,
+                        size: getProportionateHeight(24),
+                      ),
+                    ],
                     if (showCheckIcon) ...[
                       SizedBox(width: getProportionateScreenWidth(8)),
                       SvgPicture.asset(

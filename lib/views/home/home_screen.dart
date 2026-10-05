@@ -9,9 +9,11 @@ import 'package:vessel_pipeline_discharge_app/models/operation_models.dart';
 import 'package:vessel_pipeline_discharge_app/provider/operation_provider.dart';
 import 'package:vessel_pipeline_discharge_app/views/alerts/alerts_screen.dart';
 import 'package:vessel_pipeline_discharge_app/views/history/history_screen.dart';
+import 'package:vessel_pipeline_discharge_app/widgets/banners/discharge_started_banner.dart';
 import 'package:vessel_pipeline_discharge_app/widgets/banners/success_banner.dart';
 import 'package:vessel_pipeline_discharge_app/widgets/navigation/custom_bottom_nav_bar.dart';
 import 'package:vessel_pipeline_discharge_app/widgets/operation/operation_card.dart';
+import 'package:vessel_pipeline_discharge_app/widgets/operation/station_flow_card.dart';
 import 'package:vessel_pipeline_discharge_app/widgets/painters/grid_painter.dart';
 import 'package:vessel_pipeline_discharge_app/widgets/station/station_status.dart';
 
@@ -59,10 +61,15 @@ class _HomeTabContent extends StatefulWidget {
 class _HomeTabContentState extends State<_HomeTabContent> {
   bool _showBanner = false;
   Timer? _bannerTimer;
+  bool _showDischargeBanner = false;
+  Timer? _dischargeBannerTimer;
+  OperationState? _lastState;
+  bool _allStationsReadyNotified = false;
 
   @override
   void dispose() {
     _bannerTimer?.cancel();
+    _dischargeBannerTimer?.cancel();
     super.dispose();
   }
 
@@ -73,7 +80,7 @@ class _HomeTabContentState extends State<_HomeTabContent> {
     );
   }
 
-  void _handleRecordReadings() {
+  void _showReadyBanner() {
     setState(() => _showBanner = true);
     _bannerTimer?.cancel();
     _bannerTimer = Timer(const Duration(seconds: 5), () {
@@ -81,15 +88,43 @@ class _HomeTabContentState extends State<_HomeTabContent> {
     });
   }
 
+  void _notifyAllStationsReady(OperationController controller) {
+    final bool allReady = controller.allStationsReady;
+    if (!allReady || _allStationsReadyNotified) return;
+    _allStationsReadyNotified = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _showReadyBanner();
+    });
+  }
+
+  void _notifyDischargeStarted(OperationController controller) {
+    final bool started =
+        controller.state == OperationState.active &&
+            _lastState != OperationState.active;
+    _lastState = controller.state;
+    if (!started || controller.selectedStation == Station.jetty) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      setState(() => _showDischargeBanner = true);
+      _dischargeBannerTimer?.cancel();
+      _dischargeBannerTimer = Timer(const Duration(seconds: 5), () {
+        if (mounted) setState(() => _showDischargeBanner = false);
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final OperationController controller = context.watch<OperationController>();
-    final String stationStatus =
-        controller.state == OperationState.active ||
-            controller.state == OperationState.initialized ||
-            controller.state == OperationState.setup
-        ? 'Ready'
-        : 'Inactive';
+    _notifyAllStationsReady(controller);
+    _notifyDischargeStarted(controller);
+
+    String stationStatusFor(Station station) {
+      if (!controller.roleChosen && !controller.hasActiveOperation) {
+        return 'Inactive';
+      }
+      return controller.isStationReady(station) ? 'Ready' : 'Pending';
+    }
 
     return Stack(
       children: [
@@ -130,11 +165,14 @@ class _HomeTabContentState extends State<_HomeTabContent> {
                         right: getProportionateScreenWidth(8),
                         top: getProportionateHeight(104),
                         height: getProportionateHeight(298),
-                        child: OperationCard(
-                          hasOperation: false,
-                          onStartDischarge: _handleStartDischarge,
-                          onRecordReadings: _handleRecordReadings,
-                        ),
+                        child: controller.selectedStation == Station.jetty
+                            ? OperationCard(
+                                hasOperation: false,
+                                onStartDischarge: _handleStartDischarge,
+                              )
+                            : StationFlowCard(
+                                station: controller.selectedStation,
+                              ),
                       ),
                       Positioned(
                         left: getProportionateScreenWidth(106),
@@ -174,7 +212,11 @@ class _HomeTabContentState extends State<_HomeTabContent> {
                   left: getProportionateScreenWidth(20),
                   right: getProportionateScreenWidth(20),
                 ),
-                child: StationStatus(status: stationStatus),
+                child: StationStatus(
+                  jettyStatus: stationStatusFor(Station.jetty),
+                  boosterStatus: stationStatusFor(Station.booster),
+                  tankStatus: stationStatusFor(Station.tank),
+                ),
               ),
             ],
           ),
@@ -185,6 +227,13 @@ class _HomeTabContentState extends State<_HomeTabContent> {
             right: 0,
             top: getProportionateHeight(51),
             child: const Center(child: SuccessBanner()),
+          ),
+        if (_showDischargeBanner)
+          Positioned(
+            left: 0,
+            right: 0,
+            top: getProportionateHeight(51),
+            child: const Center(child: DischargeStartedBanner()),
           ),
       ],
     );

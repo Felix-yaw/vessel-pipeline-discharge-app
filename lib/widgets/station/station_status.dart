@@ -5,9 +5,16 @@ import 'package:vessel_pipeline_discharge_app/widgets/station/station_status_car
 
 /// Section title plus a horizontally scrollable list of station status cards.
 class StationStatus extends StatelessWidget {
-  final String status;
+  final String jettyStatus;
+  final String boosterStatus;
+  final String tankStatus;
 
-  const StationStatus({super.key, this.status = 'Inactive'});
+  const StationStatus({
+    super.key,
+    this.jettyStatus = 'Inactive',
+    this.boosterStatus = 'Inactive',
+    this.tankStatus = 'Inactive',
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -27,11 +34,11 @@ class StationStatus extends StatelessWidget {
           scrollDirection: Axis.horizontal,
           child: Row(
             children: [
-              StationStatusCard(title: 'Jetty', status: status),
+              StationStatusCard(title: 'Jetty', status: jettyStatus),
               SizedBox(width: getProportionateScreenWidth(12)),
-              StationStatusCard(title: 'Booseter', status: status),
+              StationStatusCard(title: 'Booster', status: boosterStatus),
               SizedBox(width: getProportionateScreenWidth(12)),
-              StationStatusCard(title: 'Tank', status: status),
+              StationStatusCard(title: 'Tank', status: tankStatus),
             ],
           ),
         ),

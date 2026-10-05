@@ -72,7 +72,7 @@ class PageHeader extends StatelessWidget {
             ),
           Positioned(
             left: getProportionateScreenWidth(16),
-            right: showSearch ? 0 : topHeight,
+            right: showSearch ? 0 : getProportionateScreenWidth(16),
             top: getProportionateHeight(showBack ? 62 : 20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -140,7 +140,7 @@ class PageHeader extends StatelessWidget {
                           code!,
                           style: TextStyle(
                             color: AppColors.primaryColor,
-                            fontSize: getProportionateHeight(14),
+                            fontSize: getProportionateHeight(16),
                             fontWeight: FontWeight.w500,
                           ),
                         ),

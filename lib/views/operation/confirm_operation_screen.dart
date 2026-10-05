@@ -194,10 +194,10 @@ class _ReadinessInfoBox extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            'Is your safety check complete?',
+            'Is Your safety Checks Completed?',
             style: TextStyle(
               color: AppColors.primaryColor,
-              fontSize: getProportionateHeight(14),
+              fontSize: getProportionateHeight(20),
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -205,7 +205,7 @@ class _ReadinessInfoBox extends StatelessWidget {
             'Send a readiness request to the Booster Station and Tank Farm.',
             style: TextStyle(
               color: AppColors.greyColor,
-              fontSize: getProportionateHeight(13),
+              fontSize: getProportionateHeight(16),
               fontWeight: FontWeight.w400,
             ),
           ),

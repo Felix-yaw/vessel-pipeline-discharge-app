@@ -7,7 +7,7 @@ import 'package:vessel_pipeline_discharge_app/widgets/fields/custom_text_field.d
 import 'package:vessel_pipeline_discharge_app/widgets/layout/bottom_action_bar.dart';
 import 'package:vessel_pipeline_discharge_app/widgets/layout/page_header.dart';
 
-/// Screen shown when recording initial readings.
+/// Screen shown when recording the opening readings before discharge begins.
 class InitialReadingsScreen extends StatelessWidget {
   const InitialReadingsScreen({super.key});
 
@@ -27,6 +27,7 @@ class InitialReadingsScreen extends StatelessWidget {
               title: 'Initial Readings',
               name: 'MT African Spirit',
               code: 'VES 101203',
+              titleColor: AppColors.black,
             ),
             SizedBox(height: getProportionateHeight(24)),
             Expanded(
@@ -35,7 +36,7 @@ class InitialReadingsScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Record opening readings before discharge begins',
+                      'Record the opening readings before discharge begins.',
                       style: TextStyle(
                         color: AppColors.greyColor,
                         fontSize: getProportionateHeight(16),
@@ -44,13 +45,13 @@ class InitialReadingsScreen extends StatelessWidget {
                     ),
                     SizedBox(height: getProportionateHeight(38)),
                     const CustomDropdownField(
-                      title: 'Expected tank',
+                      title: 'Expected Tank',
                       hintText: 'Select tank',
                       items: ['Tank 1', 'Tank 2', 'Tank 3'],
                     ),
                     SizedBox(height: getProportionateHeight(16)),
                     Text(
-                      'Flow Meter Readings',
+                      'Flow Meter Reading',
                       style: TextStyle(
                         fontSize: getProportionateHeight(18),
                         color: AppColors.secondaryColor,
@@ -60,17 +61,17 @@ class InitialReadingsScreen extends StatelessWidget {
                     SizedBox(height: getProportionateHeight(14)),
                     const CustomTextField(
                       title: 'Mass',
-                      hintText: 'MT African Spirit',
+                      hintText: 'eg. MT African Spirit',
                     ),
                     SizedBox(height: getProportionateHeight(16)),
                     const CustomTextField(
                       title: 'Density',
-                      hintText: '0.00',
+                      hintText: 'eg. MT African Spirit',
                     ),
                     SizedBox(height: getProportionateHeight(16)),
                     const CustomTextField(
                       title: 'Temperature',
-                      hintText: '0.00',
+                      hintText: 'eg. MT African Spirit',
                     ),
                   ],
                 ),
@@ -81,6 +82,7 @@ class InitialReadingsScreen extends StatelessWidget {
                 label: 'Submit',
                 width: getProportionateScreenWidth(336),
                 height: getProportionateHeight(56),
+                showTrailingArrow: true,
                 onPressed: () => Navigator.of(context).pop(true),
               ),
             ),

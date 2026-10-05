@@ -1,10 +1,21 @@
+/// The physical stations involved in a discharge operation.
+enum Station {
+  jetty('Jetty'),
+  booster('Booster'),
+  tank('Tank');
+
+  const Station(this.label);
+
+  /// Human-readable station name shown in the UI.
+  final String label;
+}
+
 /// The lifecycle stages of a discharge operation.
 ///
 /// Mirrors the state machine defined in the Technical Requirement Document:
 /// Idle -> Setup -> Initialized -> Active (with Halt/Resume interruptions)
 /// -> Completed (returns to Idle).
-enum OperationState {
-  /// No operation in progress. Home shows "No Operation Assigned".
+enum OperationState {  /// No operation in progress. Home shows "No Operation Assigned".
   idle,
 
   /// Jetty checklist details entered; checklist pending validation.

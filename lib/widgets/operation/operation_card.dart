@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:vessel_pipeline_discharge_app/core/constants/colors.dart';
 import 'package:vessel_pipeline_discharge_app/core/constants/size_config.dart';
 import 'package:vessel_pipeline_discharge_app/models/operation_models.dart';
-import 'package:vessel_pipeline_discharge_app/views/operation/checklist_summary_screen.dart';
+import 'package:vessel_pipeline_discharge_app/provider/operation_provider.dart';
 import 'package:vessel_pipeline_discharge_app/views/operation/confirm_operation_screen.dart';
-import 'package:vessel_pipeline_discharge_app/views/operation/hourly_readings_screen.dart';
 import 'package:vessel_pipeline_discharge_app/views/operation/initial_readings_screen.dart';
 import 'package:vessel_pipeline_discharge_app/views/operation/new_operation_screen.dart';
 import 'package:vessel_pipeline_discharge_app/widgets/buttons/gradient_button.dart';
+import 'package:vessel_pipeline_discharge_app/widgets/operation/discharge_control_card.dart';
 import 'package:vessel_pipeline_discharge_app/widgets/operation/empty_operation_card.dart';
 import 'package:vessel_pipeline_discharge_app/widgets/operation/operation_card_info.dart';
+import 'package:vessel_pipeline_discharge_app/widgets/operation/station_role_dialog.dart';
 
-/// The white card that sits over the background SVG with operation info.
+/// The white card sitting over the background SVG with operation info.
 class OperationCard extends StatefulWidget {
   final bool hasOperation;
   final VoidCallback? onContinue;
@@ -30,19 +32,15 @@ class OperationCard extends StatefulWidget {
   State<OperationCard> createState() => _OperationCardState();
 }
 
-/// Step the operation wizard is currently on.
 enum _OperationStep {
   startOperation,
   recordReadings,
   startDischarge,
-  haltDischarge,
-  markChecks,
 }
 
 class _OperationCardState extends State<OperationCard> {
   late bool _showOperation;
   _OperationStep _step = _OperationStep.startOperation;
-  final List<HourlyReadingData> _hourlyReadings = [];
 
   @override
   void initState() {
@@ -50,12 +48,17 @@ class _OperationCardState extends State<OperationCard> {
     _showOperation = widget.hasOperation;
   }
 
-  void _handleRetry() {
+  Future<void> _handleRetry() async {
+    final Station? station = await showDialog<Station>(
+      context: context,
+      builder: (_) => const StationRoleDialog(),
+    );
+    if (station == null || !mounted) return;
+    context.read<OperationController>().selectStation(station);
     setState(() {
       _showOperation = true;
       _step = _OperationStep.startOperation;
     });
-    _hourlyReadings.clear();
     widget.onContinue?.call();
   }
 
@@ -75,52 +78,41 @@ class _OperationCardState extends State<OperationCard> {
     );
     if (result != true || !mounted) return;
 
-    final bool? requested = await Navigator.of(context).push<bool>(
+    final confirmed = await Navigator.of(context).push<bool>(
       MaterialPageRoute(builder: (_) => const ConfirmOperationScreen()),
     );
-    if (requested == true && mounted) {
+    if (confirmed == true && mounted) {
       setState(() => _step = _OperationStep.startDischarge);
       widget.onStartDischarge?.call();
+      context.read<OperationController>().confirmAllStationsReady();
     }
   }
 
   void _handleStartDischarge() {
-    setState(() => _step = _OperationStep.haltDischarge);
+    context.read<OperationController>().beginDischarge();
   }
 
-  Future<void> _handleHaltDischarge() async {
-    final HourlyReadingData? reading =
-        await Navigator.of(context).push<HourlyReadingData>(
-      MaterialPageRoute(builder: (_) => const HourlyReadingsScreen()),
-    );
-    if (reading == null || !mounted) return;
-    setState(() => _hourlyReadings.add(reading));
-    final bool? confirmed = await Navigator.of(context).push<bool>(
-      MaterialPageRoute(
-        builder: (_) => ChecklistSummaryScreen(
-          hourlyReadings: List.unmodifiable(_hourlyReadings),
-          vesselName: 'MT African Spirit',
-        ),
-      ),
-    );
-    if (confirmed == true && mounted) {
-      setState(() => _step = _OperationStep.markChecks);
-    }
-  }
-
-  void _handleMarkChecks() {
+  void _resetCard() {
+    if (!mounted) return;
     setState(() {
       _showOperation = false;
       _step = _OperationStep.startOperation;
     });
-    _hourlyReadings.clear();
-    widget.onContinue?.call();
   }
 
   @override
   Widget build(BuildContext context) {
-    final bool isActive = _step != _OperationStep.startOperation &&
-        _step != _OperationStep.recordReadings;
+    final OperationController controller = context.watch<OperationController>();
+    final bool inDischarge = controller.state == OperationState.active ||
+        controller.state == OperationState.halted;
+
+    if (_showOperation && inDischarge) {
+      return DischargeControlCard(onEnded: _resetCard);
+    }
+
+    final bool isPending =
+        _showOperation && _step == _OperationStep.startOperation;
+
     return Container(
       decoration: BoxDecoration(
         color: AppColors.backgroundColor,
@@ -131,41 +123,37 @@ class _OperationCardState extends State<OperationCard> {
         fit: StackFit.expand,
         children: [
           if (_showOperation)
-            OperationCardInfo(status: isActive ? 'Active' : 'Pending')
+            OperationCardInfo(
+              status: _step == _OperationStep.startOperation
+                  ? 'Pending'
+                  : 'Active',
+              showOperationId: _step == _OperationStep.startOperation,
+            )
           else
             const EmptyOperationCard(),
           Positioned(
             left: getProportionateScreenWidth(8),
             right: getProportionateScreenWidth(8),
-            top: getProportionateHeight(230),
+            top: getProportionateHeight(isPending ? 162 : 230),
             child: GradientButton(
               label: !_showOperation
                   ? 'Retry'
                   : switch (_step) {
-                      _OperationStep.markChecks => 'Mark Checks Completed',
-                      _OperationStep.haltDischarge => 'Halt Discharge',
                       _OperationStep.startDischarge => 'Start discharge',
-                      _OperationStep.recordReadings => 'Record initial readings',
+                      _OperationStep.recordReadings =>
+                        'Record Initial Readings',
                       _OperationStep.startOperation => 'Start Operation',
                     },
               onPressed: !_showOperation
                   ? _handleRetry
                   : switch (_step) {
-                      _OperationStep.markChecks => _handleMarkChecks,
-                      _OperationStep.haltDischarge => _handleHaltDischarge,
                       _OperationStep.startDischarge => _handleStartDischarge,
                       _OperationStep.recordReadings => _handleRecordReadings,
                       _OperationStep.startOperation => _handleStartOperation,
                     },
-              backgroundColor: _step == _OperationStep.haltDischarge
-                  ? AppColors.haltBackground
-                  : null,
-              textColor: _step == _OperationStep.haltDischarge
-                  ? AppColors.haltText
-                  : null,
-              showCheckIcon: _step == _OperationStep.markChecks ||
-                  _step == _OperationStep.recordReadings,
+              showCheckIcon: _step == _OperationStep.recordReadings,
               showArrowIcon: _step == _OperationStep.startDischarge,
+              showTrailingArrow: isPending,
             ),
           ),
         ],
